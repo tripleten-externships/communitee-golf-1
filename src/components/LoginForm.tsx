@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // storage key for the jwt
 const AUTH_TOKEN_KEY = "authToken";
 
-interface LoginFormProps {
+export interface LoginFormProps {
   onLogin: () => void;
   onClose?: () => void;
   onForgotPassword?: () => void;
@@ -11,7 +11,6 @@ interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = ({
   onLogin,
-  onClose,
   onForgotPassword,
 }) => {
   const [username, setUsername] = React.useState("");
@@ -32,6 +31,25 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     }
 
     setLoading(true);
+
+    // mock login functionality for testing DEV-ONLY (removed in production build) - username: testuser / password: password123
+    if (import.meta.env.DEV) {
+      if (username === "testuser" && password === "password123") {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const chromeAny = (window as any).chrome;
+        if (chromeAny?.storage?.local?.set) {
+          chromeAny.storage.local.set({ [AUTH_TOKEN_KEY]: "mock-jwt-123" });
+        } else {
+          localStorage.setItem(AUTH_TOKEN_KEY, "mock-jwt-123");
+        }
+        onLogin();
+      } else {
+        setError("Invalid credentials");
+      }
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -62,30 +80,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <div className="relative">
-      {/* close button */}
-      {onClose && (
-        <button
-          onClick={onClose}
-          className="absolute top-1.5 right-1 p-1 z-10"
-          aria-label="Close"
-        >
-          <img
-            src="/icons/close-btn.svg"
-            alt="Close"
-            className="w-[10px] h-[10px] object-contain hover:scale-125 transition-transform ease-in-out"
-          />
-        </button>
-      )}
-
-      {/* logo */}
-      <div className="flex justify-center mb-6 py-1">
-        <img
-          src="/icons/communitee-logo.png"
-          alt="Communitee Logo"
-          className="max-h-[20px] max-w-[152px] object-contain"
-        />
-      </div>
-
       {/* form username and password */}
       <form
         onSubmit={handleSubmit}
