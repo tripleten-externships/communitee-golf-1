@@ -16,7 +16,6 @@ const MessagePreview: React.FC<MessagePreviewProps> = ({ message }) => {
     <div
       className="
         relative
-        w-full
         w-[304px]
         h-[52px]
         rounded-[12px]
@@ -29,8 +28,8 @@ const MessagePreview: React.FC<MessagePreviewProps> = ({ message }) => {
       "
     >
       <img
-        src="/pfp_img-placeholder.jpg"
-        alt="profile picture"
+        src={message.picture}
+        alt={`${message.username}'s profile picture`}
         className="w-[36px] h-[36px] rounded-full object-cover"
       />
       <p
