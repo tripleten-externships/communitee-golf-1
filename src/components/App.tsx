@@ -7,8 +7,7 @@ import { DropdownCourse } from "./DropdownCourse";
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
-  const course = ["one", "two", "three"];
-   // forgot password function
+  // forgot password function
   const handleForgot = () => {
     // example code
   };
@@ -22,7 +21,6 @@ export const App: React.FC = () => {
     }
     setIsLoggedIn(false);
   };
-
 
   return (
     // main styling for chrome extension
@@ -39,22 +37,6 @@ export const App: React.FC = () => {
           onForgotPassword={handleForgot}
         />
       ) : (
-        <>
-      <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
-Location
-</div>
-        <Dropdown 
-          buttonText="Gilory Golf Course"
-          content={
-            <>
-              {course.map((item) => (
-                <DropdownCourse key={item} onClick={() => {}}>
-                  {`Golf Course ${item}`}
-                </DropdownCourse>
-              ))}
-            </>
-          }
-        />
         <div>Chat interface will go here</div>
         </>
       )}
