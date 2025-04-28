@@ -1,8 +1,12 @@
 import React from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
+<<<<<<< HEAD
 import { Dropdown } from './Dropdown';
 import { DropdownCourse } from './DropdownCourse';
+=======
+import Menu from "./Menu";
+>>>>>>> origin/feature/menu
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -57,6 +61,7 @@ export const App: React.FC = () => {
         <div>Chat interface will go here</div>
         </>
       )}
+      
     </div>
   );
 };
