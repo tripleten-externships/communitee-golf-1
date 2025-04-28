@@ -1,9 +1,12 @@
 import React from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
+import { Dropdown } from './Dropdown';
+import { DropdownCourse } from './DropdownCourse';
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const course = ["one", "two", "three"];
 
   // forgot password function
   const handleForgot = () => {
@@ -35,7 +38,24 @@ export const App: React.FC = () => {
           onForgotPassword={handleForgot}
         />
       ) : (
+        <>
+        <div className="mb-1 text-[12px] font-normal text-[#959494] leading-[110%]">
+  Location
+</div>
+        <Dropdown 
+          buttonText="Glory Golf Course"
+          content={
+            <>
+              {course.map((item) => (
+                <DropdownCourse key={item} onClick={() => {}}>
+                  {`Golf Course ${item}`}
+                </DropdownCourse>
+              ))}
+            </>
+          }
+        />
         <div>Chat interface will go here</div>
+        </>
       )}
     </div>
   );
