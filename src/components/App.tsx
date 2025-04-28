@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
-<<<<<<< HEAD
-import { Dropdown } from './Dropdown';
-import { DropdownCourse } from './DropdownCourse';
-=======
+import { Dropdown } from "./Dropdown";
+import { DropdownCourse } from "./DropdownCourse";
 import Menu from "./Menu";
->>>>>>> origin/feature/menu
+import DMView, { Message } from "./DMView";
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const course = ["one", "two", "three"];
 
   // forgot password function
@@ -29,7 +28,7 @@ export const App: React.FC = () => {
 
   return (
     // main styling for chrome extension
-    <div className="relative bg-white rounded-2xl shadow-lg p-5 w-[336px] h-[595px] border border-[var(--Alt-grey,rgba(222,222,222,0.3))]">
+    <div className="relative bg-white rounded-2xl shadow-lg p-4 w-[336px] h-[595px] border border-[var(--Alt-grey,rgba(222,222,222,0.3))]">
       <Header
         onClose={() => window.close()}
         onLogout={handleLogout}
@@ -41,27 +40,36 @@ export const App: React.FC = () => {
           onClose={() => window.close()}
           onForgotPassword={handleForgot}
         />
+      ) : selectedMessage ? (
+        // If a message is selected, drop in the DMView
+        <DMView
+          message={selectedMessage}
+          onBack={() => setSelectedMessage(null)}
+        />
       ) : (
         <>
-        <div className="mb-1 text-[12px] font-normal text-[#959494] leading-[110%]">
-  Location
-</div>
-        <Dropdown 
-          buttonText="Glory Golf Course"
-          content={
-            <>
-              {course.map((item) => (
-                <DropdownCourse key={item} onClick={() => {}}>
-                  {`Golf Course ${item}`}
-                </DropdownCourse>
-              ))}
-            </>
-          }
-        />
-        <div>Chat interface will go here</div>
+          <div className="mb-1 text-[12px] font-normal text-[#959494] leading-[110%]">
+            Location
+          </div>
+          <Dropdown
+            buttonText="Glory Golf Course"
+            content={
+              <>
+                {course.map((item) => (
+                  <DropdownCourse key={item} onClick={() => {}}>
+                    {`Golf Course ${item}`}
+                  </DropdownCourse>
+                ))}
+              </>
+            }
+          />
+          <Menu
+            onSelectMessage={(msg: React.SetStateAction<Message | null>) =>
+              setSelectedMessage(msg)
+            }
+          />
         </>
       )}
-      
     </div>
   );
 };

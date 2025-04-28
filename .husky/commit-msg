@@ -1,1 +1,8 @@
-.git/hooks/commit-msg 
+#!/usr/bin/env bash
+#
+# git-commit-msg-linter@5.0.8 4/28/2025, 2:58:36 PM
+# id=commit-msg-linter - THE id COMMENT SHOULD NOT BE DELETED OR MODIFIED!
+# It's used to check whether this commit-msg hook file is created by us,
+# if it is then we can remove it confidently on uninstallation.
+
+cat "/Users/gooee/LocalFiles/communitee-golf-1/node_modules/commit-msg-linter/commit-msg-linter.js" | node --input-type=commonjs
