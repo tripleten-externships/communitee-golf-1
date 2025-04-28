@@ -39,6 +39,9 @@ export const App: React.FC = () => {
         />
       ) : (
         <>
+        <div className="mb-1 text-[12px] font-normal text-[#959494] leading-[110%]">
+  Location
+</div>
         <Dropdown 
           buttonText="Glory Golf Course"
           content={
