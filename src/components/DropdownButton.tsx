@@ -1,5 +1,5 @@
 import React from "react";
-import icons from "../../dist/icons/Icon.png"
+import icons from "../../public/icons/Icon.png"
 
 interface DropdownButtonProps {
     children: React.ReactNode;
