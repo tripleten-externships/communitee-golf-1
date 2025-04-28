@@ -1,6 +1,7 @@
 import React from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
+import Menu from "./Menu";
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -35,8 +36,11 @@ export const App: React.FC = () => {
           onForgotPassword={handleForgot}
         />
       ) : (
-        <div>Chat interface will go here</div>
+        <div>Chat interface will go here
+            <Menu/>
+        </div>
       )}
+      
     </div>
   );
 };
