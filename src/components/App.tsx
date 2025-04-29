@@ -37,6 +37,22 @@ export const App: React.FC = () => {
           onForgotPassword={handleForgot}
         />
       ) : (
+        <>
+//         <div className="mb-1 text-[12px] font-normal text-[#959494] leading-[110%]">
+//   Location
+// </div>
+        <Dropdown 
+          buttonText="Gilory Golf Course"
+          content={
+            <>
+              {course.map((item) => (
+                <DropdownCourse key={item} onClick={() => {}}>
+                  {`Golf Course ${item}`}
+                </DropdownCourse>
+              ))}
+            </>
+          }
+        />
         <div>Chat interface will go here</div>
         </>
       )}
