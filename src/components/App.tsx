@@ -12,9 +12,9 @@ export const App: React.FC = () => {
         <LoginForm onLogin={() => setIsLoggedIn(true)} />
       ) : (
         <>
-//         <div className="mb-1 text-[12px] font-normal text-[#959494] leading-[110%]">
-//   Location
-// </div>
+      <div className="mb-1 text-[12px] font-normal text-[#959494] leading-[110%]">
+Location
+</div>
         <Dropdown 
           buttonText="Gilory Golf Course"
           content={
