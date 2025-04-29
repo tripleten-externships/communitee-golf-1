@@ -1,5 +1,3 @@
-import {useState, useEffect} from "react";
-
 const messagesArray=["Bob", "Bud", "Bobby", "Buddy"];
 
 function Menu () {
