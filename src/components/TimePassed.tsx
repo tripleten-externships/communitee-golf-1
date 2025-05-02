@@ -52,10 +52,10 @@ const TimePassed: React.FC<TimePassedProps> = ({ timestamp }) => {
     return <span>Just now</span>;
   } else if (minutes < 60) {
     return <span>{minutes}min</span>;
-  } else if (hours < 24) {
-    return <span>{hours}h</span>;
   } else if (isYesterday()) {
     return <span>Yesterday</span>;
+  } else if (hours < 24) {
+    return <span>{hours}h</span>;
   } else if (days < 7) {
     return <span>{days} days ago</span>;
   } else {
