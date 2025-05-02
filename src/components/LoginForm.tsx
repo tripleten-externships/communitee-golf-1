@@ -97,7 +97,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             value={username}
             placeholder="Username"
             onChange={(e) => setUsername(e.target.value)}
-            className="font-poppins font-regular mt-1 block w-full rounded-xl border border-[rgba(149,148,148,1)] px-4 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            className="font-poppins font-regular mt-1 block w-full rounded-xl border border-border-grey px-4 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div>
@@ -111,25 +111,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="font-poppins font-regular mt-1 block w-full rounded-xl border border-[rgba(149,148,148,1)] px-4 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            className="font-poppins font-regular mt-1 block w-full rounded-xl border border-border-grey px-4 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* added in error text. we can move this anywhere that makes it more aesthetic stylewise. */}
-        {error && (
-          <p
-            aria-live="polite"
-            className="text-center text-sm text-red-500 mb-2"
-          >
-            {error}
-          </p>
-        )}
 
         {/* submit button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2 px-4 rounded-xl shadow-sm text-base text-white font-poppins font-semibold bg-[#ff3131] hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-2 px-4 rounded-xl shadow-sm text-base text-white font-poppins font-semibold bg-red-orange hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Signing In…" : "Sign in"}
         </button>
@@ -142,6 +132,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       >
         Forgot Password?
       </p>
+
+      {/* added in error text. we can move this anywhere that makes it more aesthetic stylewise. */}
+      {error && (
+        <p
+          aria-live="polite"
+          className="text-center text-sm text-red-500 mb-2 mt-2"
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 };

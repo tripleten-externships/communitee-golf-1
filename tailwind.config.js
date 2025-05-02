@@ -16,7 +16,14 @@ export default {
         semibold: 600,
         bold: 700,
       },
+      colors: {
+        // greys & borders
+        "border-grey": "rgba(149,148,148,1)",
+        "alt-grey": "rgba(222,222,222,0.3)",
+        // red-orange for button/notifications
+        "red-orange": "#ff3131",
+      },
     },
+    plugins: [],
   },
-  plugins: [],
 };
