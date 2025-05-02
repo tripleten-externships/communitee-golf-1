@@ -2,7 +2,6 @@ import React from "react";
 import { DropdownButton } from "./DropdownButton";
 import { DropdownContent } from "./DropdownContent";
 import { useState, useEffect, useRef } from "react";
-// import icons from "../../dist/icons/Icon.png"
 
 interface DropdownProps {
     buttonText: string;

@@ -1,5 +1,5 @@
 import React from "react";
-import icons from "../../public/icons/Icon.png";
+import dropdownArrow from "../../public/icons/dropdown-arrow.png";
 
 interface DropdownButtonProps {
     children: React.ReactNode;
@@ -16,7 +16,7 @@ return (
       hover:bg-gray-100  ${open ? "shadow-md" : ""}`}
     >
        <span>{children}</span>
-       <img src={icons} alt="Dropdown Icons" className={`w-4 h-4 mr-2 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+       <img src={dropdownArrow} alt="Dropdown Icons" className={`w-4 h-4 mr-2 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
     </button>
 );
 };
