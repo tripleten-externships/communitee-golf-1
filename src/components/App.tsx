@@ -23,7 +23,7 @@ export const App: React.FC = () => {
 
   return (
     // main styling for chrome extension
-    <div className="relative bg-white rounded-2xl shadow-lg p-5 w-[336px] h-[595px] border border-[var(--Alt-grey,rgba(222,222,222,0.3))]">
+    <div className="relative bg-white rounded-2xl shadow-lg p-5 w-[336px] h-[595px] border border-alt-grey">
       <Header
         onClose={() => window.close()}
         onLogout={handleLogout}
