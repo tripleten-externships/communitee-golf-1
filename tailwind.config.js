@@ -6,7 +6,11 @@ export default {
     "./.storybook/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        grayBorder: "#959494",
+      },
+    },
   },
   plugins: [],
-}
+};
