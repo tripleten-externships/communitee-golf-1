@@ -21,6 +21,7 @@ export const App: React.FC = () => {
     }
     setIsLoggedIn(false);
   };
+  const course = ["one", "two", "three"];
 
   return (
     // main styling for chrome extension
@@ -38,7 +39,7 @@ export const App: React.FC = () => {
         />
       ) : (
         <>
-//         <div className="mb-1 text-[12px] font-normal text-[#959494] leading-[110%]">
+//         <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
 //   Location
 // </div>
         <Dropdown 

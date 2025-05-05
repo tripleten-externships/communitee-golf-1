@@ -1,7 +1,4 @@
 import React from "react";
- HEAD
-import icons from "../../public/icons/Icon.png";
- ([CG1-11] Implement Location Dropdown after revert)
 
 interface DropdownButtonProps {
     children: React.ReactNode;
@@ -18,6 +15,7 @@ return (
       hover:bg-gray-100  ${open ? "shadow-md" : ""}`}
     >
        <span>{children}</span>
+       <img src="/icons/dropdown-arrow.png" alt="Dropdown Icons" className={`w-4 h-4 mr-2 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
  HEAD
        <img src="/icons/dropdown-arrow.png" alt="Dropdown Icons" className={`w-4 h-4 mr-2 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
 

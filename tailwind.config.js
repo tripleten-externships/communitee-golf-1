@@ -6,10 +6,7 @@ export default {
     "./.storybook/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
-  },
-  plugins: [],
-};
+    extend: {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
       },
@@ -20,14 +17,13 @@ export default {
         bold: 700,
       },
       colors: {
-        // greys & borders
-        "grayBorder": "#959494",
+        grayBorder: "#959494",
+        grayBorder: "#959494",
         "border-grey": "rgba(149,148,148,1)",
         "alt-grey": "rgba(222,222,222,0.3)",
-        // red-orange for button/notifications
         "red-orange": "#ff3131",
       },
     },
-    plugins: [],
   },
+  plugins: [],
 };
