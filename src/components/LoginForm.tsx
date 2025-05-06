@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { login } from "./utils/api";
 
 // storage key for the jwt
 const AUTH_TOKEN_KEY = "authToken";
@@ -32,41 +33,36 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
     setLoading(true);
 
+    // code below commented out because new test user and password are now being tested in the backend. ~Bree-Mass
+
     // mock login functionality for testing DEV-ONLY (removed in production build) - username: testuser / password: password123
-    if (import.meta.env.DEV) {
-      if (username === "testuser" && password === "password123") {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const chromeAny = (window as any).chrome;
-        if (chromeAny?.storage?.local?.set) {
-          chromeAny.storage.local.set({ [AUTH_TOKEN_KEY]: "mock-jwt-123" });
-        } else {
-          localStorage.setItem(AUTH_TOKEN_KEY, "mock-jwt-123");
-        }
-        onLogin();
-      } else {
-        setError("Invalid credentials");
-      }
-      setLoading(false);
-      return;
-    }
+
+    // if (import.meta.env.DEV) {
+    //   if (username === "testuser" && password === "password123") {
+    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //     const chromeAny = (window as any).chrome;
+    //     if (chromeAny?.storage?.local?.set) {
+    //       chromeAny.storage.local.set({ [AUTH_TOKEN_KEY]: "mock-jwt-123" });
+    //     } else {
+    //       localStorage.setItem(AUTH_TOKEN_KEY, "mock-jwt-123");
+    //     }
+    //     onLogin();
+    //   } else {
+    //     setError("Invalid credentials");
+    //   }
+    //   setLoading(false);
+    //   return;
+    // }
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      const token = await login(username, password);
+      const chromeAny = (window as any).chrome;
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || "Login failed");
-      }
-
-      const data = await res.json();
-      const token = data.token;
-      if (token) {
+      if (chromeAny?.storage?.local?.set) {
         // persist token in chrome storage. this can be changed to whatever works with the backend.
-        chrome.storage.local.set({ [AUTH_TOKEN_KEY]: token });
+        chromeAny.storage.local.set({ [AUTH_TOKEN_KEY]: token });
+      } else {
+        localStorage.setItem(AUTH_TOKEN_KEY, token);
       }
 
       onLogin();
