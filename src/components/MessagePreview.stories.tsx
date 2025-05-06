@@ -9,7 +9,7 @@ const meta: Meta<typeof MessagePreview> = {
   tags: ["autodocs"],
   argTypes: {
     // Define controls for the props of the MessagePreview component
-    message: {
+    previewProps: {
       control: "object",
       description:
         "Object containing message data, including username, picture, messageid, text, and timestamp.",
@@ -29,12 +29,12 @@ type Story = StoryObj<typeof MessagePreview>;
 // Case: seconds < 60 -> "Just now"
 export const JustNow: Story = {
   args: {
-    message: {
-      username: "Alice", // Added username
-      picture: "/pfp_img-placeholder.jpg", // Added picture
-      messageid: "msg1", // Changed id to messageid
-      text: "A message sent just now.",
-      timestamp: Date.now() - 30 * 1000, // 30 seconds ago
+    previewProps: {
+      clientName: "Alice", // Added username
+      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      unreadCount: 4,
+      lastMessage: "A message sent just now.",
+      lastMessageAt: Date.now() - 30 * 1000, // 30 seconds ago
     },
   },
   parameters: {
@@ -49,12 +49,12 @@ export const JustNow: Story = {
 // Case: minutes < 60 -> "Xmin" (Covers 1 minute up to 59 minutes)
 export const MinutesAgo: Story = {
   args: {
-    message: {
-      username: "Bob", // Added username
-      picture: "/pfp_img-placeholder.jpg", // Added picture
-      messageid: "msg2", // Changed id to messageid
-      text: "A message from a few minutes ago.",
-      timestamp: Date.now() - 15 * 60 * 1000, // 15 minutes ago
+    previewProps: {
+      clientName: "Bob", // Added username
+      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      unreadCount: 1,
+      lastMessage: "A message from a few minutes ago.",
+      lastMessageAt: Date.now() - 15 * 60 * 1000, // 15 minutes ago
     },
   },
   parameters: {
@@ -70,12 +70,12 @@ export const MinutesAgo: Story = {
 // Case: hours < 24 -> "Xh" (Covers 1 hour up to 23 hours)
 export const HoursAgo: Story = {
   args: {
-    message: {
-      username: "Charlie", // Added username
-      picture: "/pfp_img-placeholder.jpg", // Added picture
-      messageid: "msg3", // Changed id to messageid
-      text: "A message from a few hours ago.",
-      timestamp: Date.now() - 3 * 60 * 60 * 1000, // 3 hours ago
+    previewProps: {
+      clientName: "Charlie", // Added username
+      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      unreadCount: 0,
+      lastMessage: "A message from a few hours ago.",
+      lastMessageAt: Date.now() - 3 * 60 * 60 * 1000, // 3 hours ago
     },
   },
   parameters: {
@@ -99,12 +99,12 @@ const yesterdayTimestamp = yesterdayMidnight.getTime() + 12 * 60 * 60 * 1000; //
 
 export const Yesterday: Story = {
   args: {
-    message: {
-      username: "David", // Added username
-      picture: "/pfp_img-placeholder.jpg", // Added picture
-      messageid: "msg4", // Changed id to messageid
-      text: "A message sent yesterday.",
-      timestamp: yesterdayTimestamp, // Timestamp set to yesterday noon
+    previewProps: {
+      clientName: "David", // Added username
+      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      unreadCount: 10,
+      lastMessage: "A message sent yesterday.",
+      lastMessageAt: yesterdayTimestamp, // Timestamp set to yesterday noon
     },
   },
   parameters: {
@@ -122,12 +122,12 @@ export const Yesterday: Story = {
 // 2 days ago
 export const TwoDaysAgo: Story = {
   args: {
-    message: {
-      username: "Eve", // Added username
-      picture: "/pfp_img-placeholder.jpg", // Added picture
-      messageid: "msg5", // Changed id to messageid
-      text: "A message from exactly two days ago.",
-      timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000 - 1000, // 2 days ago minus a second to be sure `days` is 2
+    previewProps: {
+      clientName: "Eve", // Added username
+      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      unreadCount: 100,
+      lastMessage: "A message from exactly two days ago.",
+      lastMessageAt: Date.now() - 2 * 24 * 60 * 60 * 1000 - 1000, // 2 days ago minus a second to be sure `days` is 2
     },
   },
   parameters: {
@@ -142,12 +142,12 @@ export const TwoDaysAgo: Story = {
 // 3 days ago
 export const ThreeDaysAgo: Story = {
   args: {
-    message: {
-      username: "Frank", // Added username
-      picture: "/pfp_img-placeholder.jpg", // Added picture
-      messageid: "msg6", // Changed id to messageid
-      text: "A message from three days ago.",
-      timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000 - 1000, // 3 days ago minus a second
+    previewProps: {
+      clientName: "Frank", // Added username
+      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      unreadCount: -1,
+      lastMessage: "A message from three days ago.",
+      lastMessageAt: Date.now() - 3 * 24 * 60 * 60 * 1000 - 1000, // 3 days ago minus a second
     },
   },
   parameters: {
@@ -162,12 +162,13 @@ export const ThreeDaysAgo: Story = {
 // 6 days ago
 export const SixDaysAgo: Story = {
   args: {
-    message: {
-      username: "Grace", // Added username
-      picture: "/pfp_img-placeholder.jpg", // Added picture
-      messageid: "msg7", // Changed id to messageid
-      text: "A message from six days ago. This also has some extra text.",
-      timestamp: Date.now() - 6 * 24 * 60 * 60 * 1000 - 1000, // 6 days ago minus a second
+    previewProps: {
+      clientName: "Grace", // Added username
+      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      unreadCount: 10,
+      lastMessage:
+        "A message from six days ago. This also has some extra text.",
+      lastMessageAt: Date.now() - 6 * 24 * 60 * 60 * 1000 - 1000, // 6 days ago minus a second
     },
   },
   parameters: {
@@ -184,12 +185,13 @@ export const SixDaysAgo: Story = {
 // 7 days ago
 export const SevenDaysAgo: Story = {
   args: {
-    message: {
-      username: "Heidi", // Added username
-      picture: "/pfp_img-placeholder.jpg", // Added picture
-      messageid: "msg8", // Changed id to messageid
-      text: "A message from exactly seven days ago. And it has some extra text.",
-      timestamp: Date.now() - 7 * 24 * 60 * 60 * 1000, // Exactly 7 days ago
+    previewProps: {
+      clientName: "Heidi", // Added username
+      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      unreadCount: 99,
+      lastMessage:
+        "A message from exactly seven days ago. And it has some extra text.",
+      lastMessageAt: Date.now() - 7 * 24 * 60 * 60 * 1000, // Exactly 7 days ago
     },
   },
   parameters: {
@@ -205,12 +207,12 @@ export const SevenDaysAgo: Story = {
 const fixedDateInPastTimestamp = new Date("2023-07-15T10:30:00Z").getTime();
 export const FixedDateInPast: Story = {
   args: {
-    message: {
-      username: "Ivan", // Added username
-      picture: "/pfp_img-placeholder.jpg", // Added picture
-      messageid: "msg9", // Changed id to messageid
-      text: "A message from a specific fixed date.",
-      timestamp: fixedDateInPastTimestamp,
+    previewProps: {
+      clientName: "Ivan", // Added username
+      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      unreadCount: 1,
+      lastMessage: "A message from a specific fixed date.",
+      lastMessageAt: fixedDateInPastTimestamp,
     },
   },
   parameters: {
