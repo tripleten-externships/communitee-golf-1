@@ -17,13 +17,16 @@ export default {
         bold: 700,
       },
       colors: {
-        // greys & borders
-        "border-grey": "rgba(149,148,148,1)",
+        black: "#030303",
+        white: "#ffffff",
+        "alt-white": "#f5f8fa",
+        "border-grey": "#959494",
         "alt-grey": "rgba(222,222,222,0.3)",
-        // red-orange for button/notifications
+        "black-bg": "#1c1919",
+        "text-on-black-bg": "#b1acac",
         "red-orange": "#ff3131",
       },
     },
-    plugins: [],
   },
+  plugins: [],
 };
