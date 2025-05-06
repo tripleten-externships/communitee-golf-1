@@ -1,8 +1,8 @@
 import React from "react";
 
-type MenuProps = {
+interface MenuProps {
     messages: string[];
-};
+}
 
 const Menu: React.FC<MenuProps> = ({ messages }) => {
     return(
