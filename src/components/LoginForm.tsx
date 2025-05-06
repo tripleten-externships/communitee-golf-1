@@ -56,11 +56,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
     try {
       const token = await login(username, password);
-      const chromeAny = (window as any).chrome;
+      const chromeStorage = (
+        window as typeof window & { chrome?: typeof chrome }
+      ).chrome?.storage;
 
-      if (chromeAny?.storage?.local?.set) {
+      if (chromeStorage?.local?.set) {
         // persist token in chrome storage. this can be changed to whatever works with the backend.
-        chromeAny.storage.local.set({ [AUTH_TOKEN_KEY]: token });
+        chromeStorage?.local?.set({ [AUTH_TOKEN_KEY]: token });
       } else {
         localStorage.setItem(AUTH_TOKEN_KEY, token);
       }
