@@ -9,4 +9,8 @@ const meta: Meta<typeof Menu> = {
 export default meta;
 type Story = StoryObj<typeof Menu>;
 
-export const Default: Story = {};
+export const Default: Story = {
+    args: {
+        messages: ["Bob", "Buddy"],
+    }
+};
