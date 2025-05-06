@@ -24,8 +24,6 @@ export default {
         "alt-grey": "rgba(222,222,222,0.3)",
         "black-bg": "#1c1919",
         "text-on-black-bg": "#b1acac",
-        "red-orange": "#ff3131",
-      },
     },
     plugins: [],
   },
