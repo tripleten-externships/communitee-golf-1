@@ -18,7 +18,6 @@ export default {
       },
       colors: {
         grayBorder: "#959494",
-        grayBorder: "#959494",
         "border-grey": "rgba(149,148,148,1)",
         "alt-grey": "rgba(222,222,222,0.3)",
         "red-orange": "#ff3131",
