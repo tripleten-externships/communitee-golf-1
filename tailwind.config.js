@@ -24,7 +24,8 @@ export default {
         "alt-grey": "rgba(222,222,222,0.3)",
         "black-bg": "#1c1919",
         "text-on-black-bg": "#b1acac",
+      }, // Fixed: Added the missing closing brace for colors object
     },
-    plugins: [],
   },
+  plugins: [],
 };
