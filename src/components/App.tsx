@@ -3,6 +3,7 @@ import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { Dropdown } from "./Dropdown";
 import { useState } from "react";
+import Menu from "./Menu";
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -48,9 +49,11 @@ export const App: React.FC = () => {
           items={course}
           onSelect={(item) => setSelected(item)} 
           />
-        <div>Chat interface will go here</div>
-        </>
+         <div>Chat interface will go here
+            <Menu messages={["Bob", "Buddy"]}/>
+        </div>
       )}
+      
     </div>
   );
 };
