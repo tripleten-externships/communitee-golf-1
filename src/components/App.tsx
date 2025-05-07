@@ -7,7 +7,7 @@ import Menu from "./Menu";
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [, setSelected] = useState<string | null>(null);
 
   // forgot password function
   const handleForgot = () => {
