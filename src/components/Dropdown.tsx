@@ -2,16 +2,16 @@ import React from "react";
 import {DropdownButton} from "./DropdownButton";
 import {DropdownContent} from "./DropdownContent";
 import { useState, useEffect, useRef } from "react";
-// import icons from "../../dist/icons/Icon.png"
 
 interface DropdownProps {
     buttonText: string;
-    content: React.ReactNode;
-    
+    onSelect?: (item: string) => void;
+    items: string[];
   }
 
-  export const Dropdown: React.FC<DropdownProps> = ({buttonText, content}: DropdownProps) => {
+  export const Dropdown: React.FC<DropdownProps> = ({buttonText, onSelect, items}: DropdownProps) => {
     const [open, setOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<string>(buttonText || items[0]);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -33,10 +33,25 @@ interface DropdownProps {
         };
     }, []);
 
+    const handleSelect = (item: string) => {
+        setSelectedItem(item);
+        onSelect?.(item);
+        setOpen(false);
+      };
+
     return (
         <div className="font-poppins font-regular relative flex flex-col gap-2" ref={dropdownRef}>
-            <DropdownButton toggle={toggleDropdown} open={open}>{buttonText} </DropdownButton>
-             <DropdownContent open={open}>{content} </DropdownContent>
+            <DropdownButton toggle={toggleDropdown} open={open}>{selectedItem} </DropdownButton>
+             <DropdownContent open={open}><ul> {items.map((item) => ( <li key={item}>
+        <button
+          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+          onClick={() => handleSelect(item)}
+        >
+          {item}
+        </button>
+      </li>
+    ))}
+  </ul> </DropdownContent>
         </div>
     );
 };
