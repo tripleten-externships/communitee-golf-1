@@ -52,6 +52,7 @@ export const App: React.FC = () => {
          <div>Chat interface will go here
             <Menu messages={["Bob", "Buddy"]}/>
         </div>
+        </>
       )}
       
     </div>
