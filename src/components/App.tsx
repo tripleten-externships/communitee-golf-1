@@ -1,10 +1,41 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
+
+import {
+  getMessageStreams,
+} from "./utils/api.tsx";
+
+import {AUTH_TOKEN_KEY} from "./LoginForm.tsx"
+
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import Menu from "./Menu";
 
 export const App: React.FC = () => {
+  // import get locations in a later ticket
+  const locationId = "2";
+
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  // setting messages array
+  interface Message {
+    clientName: string;
+    clientImage: string;
+    unreadCount: number;
+    lastMessageAt: number;
+    lastMessage: string;
+}
+  const [messagesData, setMessagesData] = useState<Message[]>([]);
+
+  useEffect(()=>{
+    getMessageStreams(AUTH_TOKEN_KEY, locationId)
+    .then((data: Message[])=>{
+      console.log(data);
+      setMessagesData(data);
+    })
+    .catch(error => {
+      console.error("Cannot fetch message streams:", error);
+    });
+  }, []);
 
   // forgot password function
   const handleForgot = () => {
@@ -37,7 +68,7 @@ export const App: React.FC = () => {
         />
       ) : (
         <div>Chat interface will go here
-            <Menu messages={["Bob", "Buddy"]}/>
+            <Menu messagesData={messagesData}/>
         </div>
       )}
       
