@@ -1,15 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
+import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import Menu from "./Menu";
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-
-  // forgot password function
-  const handleForgot = () => {
-    // example code
-  };
+  const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
 
   // logout function
   const handleLogout = () => {
@@ -19,6 +16,7 @@ export const App: React.FC = () => {
       localStorage.removeItem("authToken");
     }
     setIsLoggedIn(false);
+    setCurrentView("login");
   };
 
   return (
@@ -30,17 +28,22 @@ export const App: React.FC = () => {
         isLoggedIn={isLoggedIn}
       />
       {!isLoggedIn ? (
-        <LoginForm
-          onLogin={() => setIsLoggedIn(true)}
-          onClose={() => window.close()}
-          onForgotPassword={handleForgot}
-        />
+        currentView === "login" ? (
+          <LoginForm
+            onLogin={() => {
+              setIsLoggedIn(true);
+            }}
+            onForgotPassword={() => setCurrentView("forgot")}
+          />
+        ) : (
+          <ForgotPasswordForm onBackToLogin={() => setCurrentView("login")} />
+        )
       ) : (
-        <div>Chat interface will go here
-            <Menu messages={["Bob", "Buddy"]}/>
+        <div>
+          Chat interface will go here
+          <Menu messages={["Bob", "Buddy"]} />
         </div>
       )}
-      
     </div>
   );
 };
