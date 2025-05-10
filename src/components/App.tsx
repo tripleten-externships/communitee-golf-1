@@ -1,10 +1,13 @@
 import React from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
+import { Dropdown } from "./Dropdown";
+import { useState } from "react";
 import Menu from "./Menu";
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [, setSelected] = useState<string | null>(null);
 
   // forgot password function
   const handleForgot = () => {
@@ -20,6 +23,7 @@ export const App: React.FC = () => {
     }
     setIsLoggedIn(false);
   };
+  const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   return (
     // main styling for chrome extension
@@ -36,9 +40,19 @@ export const App: React.FC = () => {
           onForgotPassword={handleForgot}
         />
       ) : (
-        <div>Chat interface will go here
+        <>
+       <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
+ Location
+</div>
+        <Dropdown 
+          buttonText="Selected option"
+          items={course}
+          onSelect={(item) => setSelected(item)} 
+          />
+         <div>Chat interface will go here
             <Menu messages={["Bob", "Buddy"]}/>
         </div>
+        </>
       )}
       
     </div>
