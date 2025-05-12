@@ -13,17 +13,14 @@ const request = (url: string, options: RequestInit) => {
     return fetch(url, options).then(checkResponse);
   };
 
-export const getLocations = async (token: string) => {
-    const response = await request (`${baseUrl}/location`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, 
-        },
-    });
-    if (!response.ok) {
-        throw new Error("Authentication token required");
-      }
 
-      return await response.json();
-}
+  export const getLocations = async (token: string) => {
+    const response = await request(`${baseUrl}/location`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // 🔑 Add token here
+      },
+    });
+    return response;
+  };

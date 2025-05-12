@@ -5,7 +5,6 @@ import { Dropdown } from "./Dropdown";
 import { useState, useEffect } from "react";
 import Menu from "./Menu";
 import { getLocations } from "./utils/api";
-import { AUTH_TOKEN_KEY } from "./LoginForm";
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -13,25 +12,19 @@ export const App: React.FC = () => {
   const [course, setCourse] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
-  
-    chrome.storage.local.get([AUTH_TOKEN_KEY], async (result) => {
-      const token = result[AUTH_TOKEN_KEY];
-  
-      if (!token) {
-        console.warn("No token in chrome.storage.local");
-        return;
-      }
-  
+    const loadLocations = async () => {
       try {
-        const data = await getLocations(token);
-        const names = data.map((loc: { name: string }) => loc.name);
-        setCourse(names);
-      } catch (error) {
-        console.error("Failed to load locations", error);
+        const token = "test"; // or use chrome.storage/localStorage if available
+        const res = await getLocations(token);
+        const locationNames = res.map((loc: { name: string }) => loc.name);
+        setCourse(locationNames);
+      } catch (err) {
+        console.error("Failed to load locations", err);
       }
-    });
-  }, [isLoggedIn]);
+    };
+  
+    loadLocations();
+  }, []);
   // forgot password function
   const handleForgot = () => {
     // example code
