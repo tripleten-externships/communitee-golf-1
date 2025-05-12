@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 // storage key for the jwt
-const AUTH_TOKEN_KEY = "authToken";
+export const AUTH_TOKEN_KEY = "authToken";
 
 export interface LoginFormProps {
   onLogin: () => void;

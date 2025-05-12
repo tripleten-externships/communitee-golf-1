@@ -2,13 +2,36 @@ import React from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { Dropdown } from "./Dropdown";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Menu from "./Menu";
+import { getLocations } from "./utils/api";
+import { AUTH_TOKEN_KEY } from "./LoginForm";
 
 export const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [, setSelected] = useState<string | null>(null);
+  const [course, setCourse] = useState<string[]>([]);
 
+  useEffect(() => {
+    if (!isLoggedIn) return;
+  
+    chrome.storage.local.get([AUTH_TOKEN_KEY], async (result) => {
+      const token = result[AUTH_TOKEN_KEY];
+  
+      if (!token) {
+        console.warn("No token in chrome.storage.local");
+        return;
+      }
+  
+      try {
+        const data = await getLocations(token);
+        const names = data.map((loc: { name: string }) => loc.name);
+        setCourse(names);
+      } catch (error) {
+        console.error("Failed to load locations", error);
+      }
+    });
+  }, [isLoggedIn]);
   // forgot password function
   const handleForgot = () => {
     // example code
@@ -23,7 +46,7 @@ export const App: React.FC = () => {
     }
     setIsLoggedIn(false);
   };
-  const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
+  // const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   return (
     // main styling for chrome extension
