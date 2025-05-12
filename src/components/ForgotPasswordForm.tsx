@@ -1,4 +1,3 @@
-// src/components/ForgotPasswordForm.tsx
 import React, { useState } from "react";
 import { forgotPassword } from "./utils/api";
 
@@ -9,7 +8,7 @@ export interface ForgotPasswordFormProps {
 export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   onBackToLogin,
 }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -19,14 +18,14 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
     setError(null);
     setMessage(null);
 
-    if (!email.trim()) {
-      setError("Email is required");
+    if (!username.trim()) {
+      setError("Username is required");
       return;
     }
 
     setLoading(true);
     try {
-      await forgotPassword(email);
+      await forgotPassword(username);
       setMessage(
         "Check your email for instructions on resetting your password."
       );
@@ -49,11 +48,11 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
       >
         <div className="mt-[137px]">
           <input
-            type="email"
-            id="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            id="username"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="font-poppins font-regular mt-1 block w-full rounded-xl border border-border-grey px-4 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           />
         </div>

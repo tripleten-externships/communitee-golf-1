@@ -108,24 +108,17 @@ export const sendMessage = async (
 };
 
 // mock forgot password functionality
-export const forgotPassword = async (email: string) => {
-  if (import.meta.env.DEV) {
-    // simulate network delay
-    await new Promise((res) => setTimeout(res, 500));
-    // return true
-    return { success: true };
-  }
+export const forgotPassword = async (username: string) => {
+  const token = localStorage.getItem("token") || "";
 
-  // example for when backend is ready
-  const response = await request(`${baseUrl}/forgot-password`, {
+  return request(`${baseUrl}/forgot-password`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
+    headers: {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: JSON.stringify({ username }),
   });
-  if (response.success) {
-    return response;
-  }
-  throw new Error(response.error || "Failed to send reset link");
 };
 
 export default {
