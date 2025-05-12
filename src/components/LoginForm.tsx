@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { login } from "./utils/api";
-
-// storage key for the jwt
-const AUTH_TOKEN_KEY = "authToken";
+import { useAuth } from "../contexts/AuthContext";
 
 export interface LoginFormProps {
   onLogin: () => void;
@@ -16,6 +13,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+
+  const { login } = useAuth();
 
   // ui state for errors and loading
   const [error, setError] = useState<string | null>(null);
@@ -33,40 +32,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
     setLoading(true);
 
-    // code below commented out because new test user and password are now being tested in the backend. ~Bree-Mass
-
-    // mock login functionality for testing DEV-ONLY (removed in production build) - username: testuser / password: password123
-
-    // if (import.meta.env.DEV) {
-    //   if (username === "testuser" && password === "password123") {
-    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //     const chromeAny = (window as any).chrome;
-    //     if (chromeAny?.storage?.local?.set) {
-    //       chromeAny.storage.local.set({ [AUTH_TOKEN_KEY]: "mock-jwt-123" });
-    //     } else {
-    //       localStorage.setItem(AUTH_TOKEN_KEY, "mock-jwt-123");
-    //     }
-    //     onLogin();
-    //   } else {
-    //     setError("Invalid credentials");
-    //   }
-    //   setLoading(false);
-    //   return;
-    // }
-
     try {
-      const token = await login(username, password);
-      const chromeStorage = (
-        window as typeof window & { chrome?: typeof chrome }
-      ).chrome?.storage;
-
-      if (chromeStorage?.local?.set) {
-        // persist token in chrome storage. this can be changed to whatever works with the backend.
-        chromeStorage?.local?.set({ [AUTH_TOKEN_KEY]: token });
-      } else {
-        localStorage.setItem(AUTH_TOKEN_KEY, token);
-      }
-
+      await login(username, password);
       onLogin();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
