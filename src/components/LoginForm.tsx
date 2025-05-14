@@ -33,27 +33,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
     setLoading(true);
 
-    // code below commented out because new test user and password are now being tested in the backend. ~Bree-Mass
-
-    // mock login functionality for testing DEV-ONLY (removed in production build) - username: testuser / password: password123
-
-    // if (import.meta.env.DEV) {
-    //   if (username === "testuser" && password === "password123") {
-    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //     const chromeAny = (window as any).chrome;
-    //     if (chromeAny?.storage?.local?.set) {
-    //       chromeAny.storage.local.set({ [AUTH_TOKEN_KEY]: "mock-jwt-123" });
-    //     } else {
-    //       localStorage.setItem(AUTH_TOKEN_KEY, "mock-jwt-123");
-    //     }
-    //     onLogin();
-    //   } else {
-    //     setError("Invalid credentials");
-    //   }
-    //   setLoading(false);
-    //   return;
-    // }
-
     try {
       const token = await login(username, password);
       const chromeStorage = (
