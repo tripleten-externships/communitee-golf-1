@@ -2,7 +2,8 @@ import React, {useState, useEffect} from "react";
 
 import {
     getMessageStreams,
-  } from "./utils/api.tsx";
+    getLocations,
+} from "./utils/api.tsx";
 
 import MessagePreview from "./MessagePreview";
 import {AUTH_TOKEN_KEY} from "./LoginForm.tsx"
@@ -20,20 +21,28 @@ interface MenuProps {
 }
 
 export const Menu: React.FC<MenuProps> = ({ selected }) => {
-    const [locationId, setLocationId] = useState("0");
-    const [messagesData, setMessagesData] = useState<Message[]>([]);
     // setting locationId
+    const [locationId, setLocationId] = useState("0");
+    const [locations, setLocations] = useState<{id: string; name: string}[]>([]);
+    const [messagesData, setMessagesData] = useState<Message[]>([]);
+    
+    // getting locations from mock api
     useEffect(()=>{
-        if(selected==="Golf Course one"){
-        setLocationId("1");
-        }else if(selected==="Golf Course two"){
-        setLocationId("2");
-        }else if(selected==="Golf Course three"){
-        setLocationId("3");
-        }else{
-        setLocationId("0");
-        }
-    }, [selected]);
+        getLocations(AUTH_TOKEN_KEY)
+        .then((data)=>{
+            setLocations(data);
+        })
+        .catch((error)=>{
+            console.error("Cannot fetch location:", error);
+        })
+    },[]);
+
+    // finding the right location based on selection
+    useEffect(()=>{
+        const select = locations.find((location) => location.name === selected);
+        setLocationId(select ? select.id : "0");
+    },[selected, locations])
+
     // setting message array 
     useEffect(()=>{
         getMessageStreams(AUTH_TOKEN_KEY, locationId)
@@ -44,7 +53,6 @@ export const Menu: React.FC<MenuProps> = ({ selected }) => {
           console.error("Cannot fetch message streams:", error);
         });
       }, [locationId]);
-
     return(
         <div>
             <p className = {`font-poppins font-medium text-center text-base w-[152px] text-black border-b-2 border-b-black mt-[30px] mx-[auto] py-[10px]`}>Messages ({messagesData.length})</p>
