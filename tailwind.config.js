@@ -17,6 +17,7 @@ export default {
         bold: 700,
       },
       colors: {
+        grayBorder: "#959494",
         black: "#030303",
         white: "#ffffff",
         "alt-white": "#f5f8fa",

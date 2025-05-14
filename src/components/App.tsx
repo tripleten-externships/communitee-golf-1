@@ -1,41 +1,14 @@
-import React, {useState, useEffect} from "react";
-
-import {
-  getMessageStreams,
-} from "./utils/api.tsx";
-
-import {AUTH_TOKEN_KEY} from "./LoginForm.tsx"
+import React, {useState} from "react";
 
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
-import Menu from "./Menu";
+import { Dropdown } from "./Dropdown";
+import { Menu } from "./Menu";
 
 export const App: React.FC = () => {
-  // import get locations in a later ticket
-  const locationId = "2";
-
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-
-  // setting messages array
-  interface Message {
-    clientName: string;
-    clientImage: string;
-    unreadCount: number;
-    lastMessageAt: number;
-    lastMessage: string;
-}
-  const [messagesData, setMessagesData] = useState<Message[]>([]);
-
-  useEffect(()=>{
-    getMessageStreams(AUTH_TOKEN_KEY, locationId)
-    .then((data: Message[])=>{
-      console.log(data);
-      setMessagesData(data);
-    })
-    .catch(error => {
-      console.error("Cannot fetch message streams:", error);
-    });
-  }, []);
+  const [selected, setSelected] = useState<string | null>(null);
+  const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   // forgot password function
   const handleForgot = () => {
@@ -67,9 +40,15 @@ export const App: React.FC = () => {
           onForgotPassword={handleForgot}
         />
       ) : (
-        <div>Chat interface will go here
-            <Menu messagesData={messagesData}/>
-        </div>
+        <>
+       <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">Location</div>
+        <Dropdown 
+          buttonText="Selected option"
+          items={course}
+          onSelect={(item) => setSelected(item)} 
+        />
+        <Menu selected={selected}/>
+        </>
       )}
       
     </div>
