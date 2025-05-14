@@ -8,6 +8,7 @@ import {AUTH_TOKEN_KEY} from "./LoginForm.tsx"
 
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
+import { Dropdown } from "./Dropdown";
 import Menu from "./Menu";
 
 export const App: React.FC = () => {
@@ -15,6 +16,7 @@ export const App: React.FC = () => {
   const locationId = "2";
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [, setSelected] = useState<string | null>(null);
 
   // setting messages array
   interface Message {
@@ -51,6 +53,7 @@ export const App: React.FC = () => {
     }
     setIsLoggedIn(false);
   };
+  const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   return (
     // main styling for chrome extension
@@ -67,9 +70,19 @@ export const App: React.FC = () => {
           onForgotPassword={handleForgot}
         />
       ) : (
-        <div>Chat interface will go here
+        <>
+       <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
+ Location
+</div>
+        <Dropdown 
+          buttonText="Selected option"
+          items={course}
+          onSelect={(item) => setSelected(item)} 
+          />
+         <div>Chat interface will go here
             <Menu messagesData={messagesData}/>
         </div>
+        </>
       )}
       
     </div>
