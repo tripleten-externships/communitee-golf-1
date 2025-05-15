@@ -1,18 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
+import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { Dropdown } from "./Dropdown";
-import { useState } from "react";
 import Menu from "./Menu";
 
 export const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [, setSelected] = useState<string | null>(null);
-
-  // forgot password function
-  const handleForgot = () => {
-    // example code
-  };
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
+  const [selected, setSelected] = useState<string | null>(null);
 
   // logout function
   const handleLogout = () => {
@@ -22,6 +18,7 @@ export const App: React.FC = () => {
       localStorage.removeItem("authToken");
     }
     setIsLoggedIn(false);
+    setCurrentView("login");
   };
   const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
@@ -34,27 +31,32 @@ export const App: React.FC = () => {
         isLoggedIn={isLoggedIn}
       />
       {!isLoggedIn ? (
-        <LoginForm
-          onLogin={() => setIsLoggedIn(true)}
-          onClose={() => window.close()}
-          onForgotPassword={handleForgot}
-        />
+        currentView === "login" ? (
+          <LoginForm
+            onLogin={() => {
+              setIsLoggedIn(true);
+            }}
+            onForgotPassword={() => setCurrentView("forgot")}
+          />
+        ) : (
+          <ForgotPasswordForm onBackToLogin={() => setCurrentView("login")} />
+        )
       ) : (
         <>
-       <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
- Location
-</div>
-        <Dropdown 
-          buttonText="Selected option"
-          items={course}
-          onSelect={(item) => setSelected(item)} 
+          <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
+            Location
+          </div>
+          <Dropdown
+            buttonText={selected ?? "Selected option"}
+            items={course}
+            onSelect={(item) => setSelected(item)}
           />
-         <div>Chat interface will go here
-            <Menu messages={["Bob", "Buddy"]}/>
-        </div>
+          <div>
+            Chat interface will go here
+            <Menu messages={["Bob", "Buddy"]} />
+          </div>
         </>
       )}
-      
     </div>
   );
 };
