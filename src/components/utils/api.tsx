@@ -1,4 +1,8 @@
-const baseUrl = "http://localhost:8080";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+if (!baseUrl) {
+  console.warn("API base URL not defined in environment variables.");
+}
 
 // Check response and return JSON if successful, otherwise throw an error
 const checkResponse = async (res: Response) => {

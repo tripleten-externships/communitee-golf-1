@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
+import { Dropdown } from "./Dropdown";
 import Menu from "./Menu";
 
 export const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
+  const [selected, setSelected] = useState<string | null>(null);
 
   // logout function
   const handleLogout = () => {
@@ -18,6 +20,7 @@ export const App: React.FC = () => {
     setIsLoggedIn(false);
     setCurrentView("login");
   };
+  const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   return (
     // main styling for chrome extension
@@ -39,10 +42,20 @@ export const App: React.FC = () => {
           <ForgotPasswordForm onBackToLogin={() => setCurrentView("login")} />
         )
       ) : (
-        <div>
-          Chat interface will go here
-          <Menu messages={["Bob", "Buddy"]} />
-        </div>
+        <>
+          <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
+            Location
+          </div>
+          <Dropdown
+            buttonText={selected ?? "Selected option"}
+            items={course}
+            onSelect={(item) => setSelected(item)}
+          />
+          <div>
+            Chat interface will go here
+            <Menu messages={["Bob", "Buddy"]} />
+          </div>
+        </>
       )}
     </div>
   );
