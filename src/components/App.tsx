@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
+import { Dropdown } from "./Dropdown";
+import { useState } from "react";
 import Menu from "./Menu";
 
 export const App: React.FC = () => {
@@ -18,6 +20,7 @@ export const App: React.FC = () => {
     setIsLoggedIn(false);
     setCurrentView("login");
   };
+  const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   return (
     // main styling for chrome extension
@@ -39,10 +42,19 @@ export const App: React.FC = () => {
           <ForgotPasswordForm onBackToLogin={() => setCurrentView("login")} />
         )
       ) : (
-        <div>
-          Chat interface will go here
-          <Menu messages={["Bob", "Buddy"]} />
+        <>
+       <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
+ Location
+</div>
+        <Dropdown 
+          buttonText="Selected option"
+          items={course}
+          onSelect={(item) => setSelected(item)} 
+          />
+         <div>Chat interface will go here
+            <Menu messages={["Bob", "Buddy"]}/>
         </div>
+        </>
       )}
     </div>
   );
