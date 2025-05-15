@@ -2,24 +2,21 @@ import React, { useState } from "react";
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
+import { useAuth } from "../contexts/AuthContext";
 import { Dropdown } from "./Dropdown";
 import Menu from "./Menu";
 
 export const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
   const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
 
   // logout function
   const handleLogout = () => {
-    try {
-      chrome.storage.local.set({ authToken: "" });
-    } catch {
-      localStorage.removeItem("authToken");
-    }
-    setIsLoggedIn(false);
+    logout();
     setCurrentView("login");
   };
+  
   const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   return (
@@ -28,14 +25,12 @@ export const App: React.FC = () => {
       <Header
         onClose={() => window.close()}
         onLogout={handleLogout}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={isAuthenticated}
       />
-      {!isLoggedIn ? (
+      {!isAuthenticated ? (
         currentView === "login" ? (
           <LoginForm
-            onLogin={() => {
-              setIsLoggedIn(true);
-            }}
+            onLogin={() => {}}
             onForgotPassword={() => setCurrentView("forgot")}
           />
         ) : (

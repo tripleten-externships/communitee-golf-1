@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { login } from "./utils/api";
-
-// storage key for the jwt
-const AUTH_TOKEN_KEY = "authToken";
+import { useAuth } from "../contexts/AuthContext";
 
 export interface LoginFormProps {
   onLogin: () => void;
@@ -16,6 +13,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+
+  const { login } = useAuth();
 
   // ui state for errors and loading
   const [error, setError] = useState<string | null>(null);
@@ -34,18 +33,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     setLoading(true);
 
     try {
-      const token = await login(username, password);
-      const chromeStorage = (
-        window as typeof window & { chrome?: typeof chrome }
-      ).chrome?.storage;
-
-      if (chromeStorage?.local?.set) {
-        // persist token in chrome storage. this can be changed to whatever works with the backend.
-        chromeStorage?.local?.set({ [AUTH_TOKEN_KEY]: token });
-      } else {
-        localStorage.setItem(AUTH_TOKEN_KEY, token);
-      }
-
+      await login(username, password);
       onLogin();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
