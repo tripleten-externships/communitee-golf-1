@@ -8,7 +8,7 @@ import {
 import MessagePreview from "./MessagePreview";
 import {AUTH_TOKEN_KEY} from "./LoginForm.tsx"
 
-interface Message {
+export interface Message {
     clientName: string;
     clientImage: string;
     unreadCount: number;
@@ -16,18 +16,21 @@ interface Message {
     lastMessage: string;
     locationId: string;
 }
-interface MenuProps {
+export interface MenuProps {
     selected: string | null;
+    messagesArray?: Message[];
 }
 
-export const Menu: React.FC<MenuProps> = ({ selected }) => {
+export const Menu: React.FC<MenuProps> = ({ selected, messagesArray }) => {
     // setting locationId
     const [locationId, setLocationId] = useState("0");
     const [locations, setLocations] = useState<{id: string; name: string}[]>([]);
-    const [messagesData, setMessagesData] = useState<Message[]>([]);
-    
+    const [messagesData, setMessagesData] = useState<Message[]>(messagesArray ?? []);
+    const shouldFetch = !messagesArray;
+
     // getting locations from mock api
     useEffect(()=>{
+        if(!shouldFetch) return;
         getLocations(AUTH_TOKEN_KEY)
         .then((data)=>{
             setLocations(data);
@@ -35,31 +38,33 @@ export const Menu: React.FC<MenuProps> = ({ selected }) => {
         .catch((error)=>{
             console.error("Cannot fetch location:", error);
         })
-    },[]);
+    },[shouldFetch]);
 
     // finding the right location based on selection
     useEffect(()=>{
+        if (!shouldFetch || !selected) return;
         const select = locations.find((location) => location.name === selected);
-        setLocationId(select ? select.id : "0");
-    },[selected, locations])
+        setLocationId(select ? select.id : "");
+    },[selected, locations, shouldFetch])
 
     // setting message array 
     useEffect(()=>{
+        if (!shouldFetch || !locationId) return;
         getMessageStreams(AUTH_TOKEN_KEY, locationId)
-        .then((data: Message[])=>{
+        .then((data)=>{
           setMessagesData(data);
         })
         .catch(error => {
           console.error("Cannot fetch message streams:", error);
         });
-      }, [locationId]);
+      }, [locationId, shouldFetch]);
     return(
         <div>
             <p className = {`font-poppins font-medium text-center text-base w-[152px] text-black border-b-2 border-b-black mt-[30px] mx-[auto] py-[10px]`}>Messages ({messagesData.length})</p>
             <ul className="flex flex-col justify-center items-center mt-[16px] gap-[12px]">
-                {messagesData.map((message, index) => (
+                {messagesData.map((message) => (
                     <MessagePreview 
-                        key={index}
+                        key={`${message.clientName}-${message.locationId}`}
                         previewProps={{
                             clientName:message.clientName,
                             clientImage:message.clientImage,
