@@ -39,7 +39,7 @@ export const Menu: React.FC<MenuProps> = ({ selected, messagesArray }) => {
         .catch((error)=>{
             console.error("Cannot fetch location:", error);
         })
-    },[shouldFetch]);
+    },[shouldFetch, token]);
 
     // finding the right location based on selection
     useEffect(()=>{
@@ -58,7 +58,7 @@ export const Menu: React.FC<MenuProps> = ({ selected, messagesArray }) => {
         .catch(error => {
           console.error("Cannot fetch message streams:", error);
         });
-      }, [locationId, shouldFetch]);
+      }, [locationId, shouldFetch, token]);
     return(
         <div>
             <p className = {`font-poppins font-medium text-center text-base w-[152px] text-black border-b-2 border-b-black mt-[30px] mx-[auto] py-[10px]`}>Messages ({messagesData.length})</p>
