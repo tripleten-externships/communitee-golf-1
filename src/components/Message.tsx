@@ -17,6 +17,7 @@ const Message: React.FC<MessageProps> = ({ message, isSent }) => {
     marginLeft: "auto",
     wordBreak: "break-word",
     fontSize: "14px",
+    whiteSpace: "pre-line",
   };
   // Define styles for received messages
   const receivedStyles: React.CSSProperties = {
@@ -29,6 +30,7 @@ const Message: React.FC<MessageProps> = ({ message, isSent }) => {
     marginRight: "auto",
     wordBreak: "break-word",
     fontSize: "14px",
+    whiteSpace: "pre-line",
   };
 
   // Choose styles based on the isSent prop

@@ -3,6 +3,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 // Assuming MessagePreview uses the updated TimePassed internally
 import MessagePreview from "./MessagePreview"; // Adjust the import path to your component
 
+const testImagePath =
+  "https://plus.unsplash.com/premium_photo-1746718185601-ea2d45a7a26e?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
 const meta: Meta<typeof MessagePreview> = {
   title: "Components/MessagePreview",
   component: MessagePreview,
@@ -31,7 +34,7 @@ export const JustNow: Story = {
   args: {
     previewProps: {
       clientName: "Alice", // Added username
-      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      clientImage: testImagePath, // Added picture
       unreadCount: 4,
       lastMessage: "A message sent just now.",
       lastMessageAt: Date.now() - 30 * 1000, // 30 seconds ago
@@ -51,7 +54,7 @@ export const MinutesAgo: Story = {
   args: {
     previewProps: {
       clientName: "Bob", // Added username
-      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      clientImage: testImagePath, // Added picture
       unreadCount: 1,
       lastMessage: "A message from a few minutes ago.",
       lastMessageAt: Date.now() - 15 * 60 * 1000, // 15 minutes ago
@@ -72,7 +75,7 @@ export const HoursAgo: Story = {
   args: {
     previewProps: {
       clientName: "Charlie", // Added username
-      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      clientImage: testImagePath, // Added picture
       unreadCount: 0,
       lastMessage: "A message from a few hours ago.",
       lastMessageAt: Date.now() - 3 * 60 * 60 * 1000, // 3 hours ago
@@ -101,7 +104,7 @@ export const Yesterday: Story = {
   args: {
     previewProps: {
       clientName: "David", // Added username
-      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      clientImage: testImagePath, // Added picture
       unreadCount: 10,
       lastMessage: "A message sent yesterday.",
       lastMessageAt: yesterdayTimestamp, // Timestamp set to yesterday noon
@@ -124,7 +127,7 @@ export const TwoDaysAgo: Story = {
   args: {
     previewProps: {
       clientName: "Eve", // Added username
-      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      clientImage: testImagePath, // Added picture
       unreadCount: 100,
       lastMessage: "A message from exactly two days ago.",
       lastMessageAt: Date.now() - 2 * 24 * 60 * 60 * 1000 - 1000, // 2 days ago minus a second to be sure `days` is 2
@@ -144,7 +147,7 @@ export const ThreeDaysAgo: Story = {
   args: {
     previewProps: {
       clientName: "Frank", // Added username
-      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      clientImage: testImagePath, // Added picture
       unreadCount: -1,
       lastMessage: "A message from three days ago.",
       lastMessageAt: Date.now() - 3 * 24 * 60 * 60 * 1000 - 1000, // 3 days ago minus a second
@@ -164,7 +167,7 @@ export const SixDaysAgo: Story = {
   args: {
     previewProps: {
       clientName: "Grace", // Added username
-      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      clientImage: testImagePath, // Added picture
       unreadCount: 10,
       lastMessage:
         "A message from six days ago. This also has some extra text.",
@@ -187,7 +190,7 @@ export const SevenDaysAgo: Story = {
   args: {
     previewProps: {
       clientName: "Heidi", // Added username
-      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      clientImage: testImagePath, // Added picture
       unreadCount: 99,
       lastMessage:
         "A message from exactly seven days ago. And it has some extra text.",
@@ -209,7 +212,7 @@ export const FixedDateInPast: Story = {
   args: {
     previewProps: {
       clientName: "Ivan", // Added username
-      clientImage: "/pfp_img-placeholder.jpg", // Added picture
+      clientImage: testImagePath, // Added picture
       unreadCount: 1,
       lastMessage: "A message from a specific fixed date.",
       lastMessageAt: fixedDateInPastTimestamp,
@@ -221,6 +224,47 @@ export const FixedDateInPast: Story = {
         story: `Displays 'MMM D' for a fixed timestamp far in the past (${new Date(
           fixedDateInPastTimestamp
         ).toLocaleDateString()}). Confirms the date formatting.`,
+      },
+    },
+  },
+};
+
+// No image provided
+export const NoImageFallback: Story = {
+  args: {
+    previewProps: {
+      clientName: "Zara",
+      clientImage: "",
+      unreadCount: 2,
+      lastMessage: "This user has no profile picture.",
+      lastMessageAt: Date.now() - 60 * 1000, // 1 minute ago
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Uses default placeholder image when clientImage is missing or empty.",
+      },
+    },
+  },
+};
+
+// Case: Broken image URL triggers onError fallback
+export const BrokenImageFallback: Story = {
+  args: {
+    previewProps: {
+      clientName: "Xavier",
+      clientImage: "https://www.fakestuff.example/fakeImage", // Invalid path
+      unreadCount: 3,
+      lastMessage: "Image failed to load.",
+      lastMessageAt: Date.now() - 5 * 60 * 1000, // 5 minutes ago
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Simulates a broken image URL to test the `onError` fallback.",
       },
     },
   },
