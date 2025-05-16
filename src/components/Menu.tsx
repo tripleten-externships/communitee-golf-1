@@ -6,7 +6,7 @@ import {
 } from "./utils/api.tsx";
 
 import MessagePreview from "./MessagePreview";
-import {AUTH_TOKEN_KEY} from "./LoginForm.tsx"
+import { useAuth } from "../contexts/useAuth";
 
 export interface Message {
     clientName: string;
@@ -25,13 +25,14 @@ export const Menu: React.FC<MenuProps> = ({ selected, messagesArray }) => {
     // setting locationId
     const [locationId, setLocationId] = useState("0");
     const [locations, setLocations] = useState<{id: string; name: string}[]>([]);
+    const { token } = useAuth();
     const [messagesData, setMessagesData] = useState<Message[]>(messagesArray ?? []);
     const shouldFetch = !messagesArray;
 
     // getting locations from mock api
     useEffect(()=>{
         if(!shouldFetch) return;
-        getLocations(AUTH_TOKEN_KEY)
+        getLocations(token)
         .then((data)=>{
             setLocations(data);
         })
@@ -50,7 +51,7 @@ export const Menu: React.FC<MenuProps> = ({ selected, messagesArray }) => {
     // setting message array 
     useEffect(()=>{
         if (!shouldFetch || !locationId) return;
-        getMessageStreams(AUTH_TOKEN_KEY, locationId)
+        getMessageStreams(token, locationId)
         .then((data)=>{
           setMessagesData(data);
         })

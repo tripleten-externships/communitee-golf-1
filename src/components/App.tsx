@@ -5,18 +5,21 @@ import {
 
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
+import { ForgotPasswordForm } from "./ForgotPasswordForm";
+import { useAuth } from "../contexts/useAuth";
 import { Dropdown } from "./Dropdown";
 import { Menu } from "./Menu";
-import {AUTH_TOKEN_KEY} from "./LoginForm.tsx"
 
 export const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const { isAuthenticated, logout, token } = useAuth();
+  const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
   const [course, setCourse] = useState<string[]>([]);
 
   // get locations for the course
   useEffect(()=>{
-    getLocations(AUTH_TOKEN_KEY)
+    if(!token) return;
+    getLocations(token)
     .then((data)=>{
         console.log(data[0].name);
         setCourse([data[0].name, data[1].name, data[2].name]);
@@ -24,21 +27,12 @@ export const App: React.FC = () => {
     .catch((error)=>{
         console.error("Cannot fetch locations:", error);
     })
-  },[]);
-
-  // forgot password function
-  const handleForgot = () => {
-    // example code
-  };
+  },[token]);
 
   // logout function
   const handleLogout = () => {
-    try {
-      chrome.storage.local.set({ authToken: "" });
-    } catch {
-      localStorage.removeItem("authToken");
-    }
-    setIsLoggedIn(false);
+    logout();
+    setCurrentView("login");
   };
 
   return (
@@ -47,15 +41,18 @@ export const App: React.FC = () => {
       <Header
         onClose={() => window.close()}
         onLogout={handleLogout}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={isAuthenticated}
       />
-      {!isLoggedIn ? (
+      {!isAuthenticated ? (
+        currentView === "login" ? (
         <LoginForm
-          onLogin={() => setIsLoggedIn(true)}
-          onClose={() => window.close()}
-          onForgotPassword={handleForgot}
-        />
-      ) : (
+        onLogin={() => {}}
+        onForgotPassword={() => setCurrentView("forgot")}
+      />
+        ) : (
+          <ForgotPasswordForm onBackToLogin={() => setCurrentView("login")} />
+        )
+     ) : (
         <>
        <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">Location</div>
         <Dropdown 
@@ -66,7 +63,6 @@ export const App: React.FC = () => {
         <Menu selected={selected}/>
         </>
       )}
-      
     </div>
   );
 };
