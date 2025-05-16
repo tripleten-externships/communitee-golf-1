@@ -6,7 +6,7 @@ import {
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
-import { useAuth } from "../contexts/useAuth";
+import { useAuth } from "../contexts/useAuth.ts";
 import { Dropdown } from "./Dropdown";
 import { Menu } from "./Menu";
 
@@ -21,7 +21,6 @@ export const App: React.FC = () => {
     if(!token) return;
     getLocations(token)
     .then((data)=>{
-        console.log(data[0].name);
         setCourse([data[0].name, data[1].name, data[2].name]);
     })
     .catch((error)=>{
@@ -34,7 +33,7 @@ export const App: React.FC = () => {
     logout();
     setCurrentView("login");
   };
-
+  
   return (
     // main styling for chrome extension
     <div className="relative bg-white rounded-2xl shadow-lg p-5 w-[336px] h-[595px] border border-alt-grey">
@@ -45,22 +44,22 @@ export const App: React.FC = () => {
       />
       {!isAuthenticated ? (
         currentView === "login" ? (
-        <LoginForm
-        onLogin={() => {}}
-        onForgotPassword={() => setCurrentView("forgot")}
-      />
+          <LoginForm
+            onLogin={() => {}}
+            onForgotPassword={() => setCurrentView("forgot")}
+          />
         ) : (
           <ForgotPasswordForm onBackToLogin={() => setCurrentView("login")} />
         )
-     ) : (
+      ) : (
         <>
-       <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">Location</div>
-        <Dropdown 
-          buttonText="Selected option"
-          items={course}
-          onSelect={(item) => setSelected(item)} 
-        />
-        <Menu selected={selected}/>
+          <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">Location</div>
+          <Dropdown
+            buttonText={selected ?? "Selected option"}
+            items={course}
+            onSelect={(item) => setSelected(item)}
+          />
+          <Menu selected={selected}/>
         </>
       )}
     </div>

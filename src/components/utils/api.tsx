@@ -111,6 +111,20 @@ export const sendMessage = async (
   return response.success;
 };
 
+// mock forgot password functionality
+export const forgotPassword = async (username: string) => {
+  const token = localStorage.getItem("token") || "";
+
+  return request(`${baseUrl}/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: JSON.stringify({ username }),
+  });
+};
+
 export default {
   login,
   getLocations,
@@ -118,4 +132,5 @@ export default {
   getSingleMessageStream,
   markStreamAsRead,
   sendMessage,
+  forgotPassword,
 };
