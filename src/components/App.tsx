@@ -33,7 +33,6 @@ export const App: React.FC = () => {
     if(!token) return;
     getMessageStreams(token, locationId)
     .then((data: Message[])=>{
-      console.log(data);
       setMessagesData(data);
     })
     .catch(error => {

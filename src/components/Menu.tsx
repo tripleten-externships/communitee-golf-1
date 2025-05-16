@@ -12,7 +12,6 @@ interface MenuProps {
     messagesData: Message[];
 }
 const Menu: React.FC<MenuProps> = ({ messagesData }) => {
-    console.log(messagesData);
     return(
         <div>
             <p className = {`font-poppins font-medium text-center text-base w-[152px] text-black border-b-2 border-b-black mt-[30px] mx-[auto] py-[10px]`}>Messages ({messagesData.length})</p>
