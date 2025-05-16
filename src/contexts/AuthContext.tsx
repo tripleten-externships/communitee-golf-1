@@ -1,23 +1,12 @@
 import React, {
   useEffect,
   useState,
-  useContext,
-  createContext,
   ReactNode,
 } from "react";
 
+import { AUTH_TOKEN_KEY } from "../components/utils/constants";
+import { AuthContext } from "./AuthContextFoundation";
 import * as api from "../components/utils/api";
-
-const AUTH_TOKEN_KEY = "authToken";
-
-interface AuthContextType {
-  token: string | null;
-  isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<void>;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -70,11 +59,4 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       {children}
     </AuthContext.Provider>
   );
-};
-
-// custom hook
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useContext must be inside AuthProvider");
-  return context;
 };

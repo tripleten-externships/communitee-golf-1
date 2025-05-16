@@ -1,15 +1,44 @@
-import React, { useState } from "react";
+import React, {useState, useEffect} from "react";
+
+import {
+  getMessageStreams,
+} from "./utils/api.tsx";
+
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/useAuth";
 import { Dropdown } from "./Dropdown";
 import Menu from "./Menu";
 
 export const App: React.FC = () => {
-  const { isAuthenticated, logout } = useAuth();
+  // import get locations in a later ticket
+  const locationId = "2";
+
+  const { isAuthenticated, logout, token } = useAuth();
   const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
+
+  // setting messages array
+  interface Message {
+    clientName: string;
+    clientImage: string;
+    unreadCount: number;
+    lastMessageAt: number;
+    lastMessage: string;
+}
+  const [messagesData, setMessagesData] = useState<Message[]>([]);
+
+  useEffect(()=>{
+    if(!token) return;
+    getMessageStreams(token, locationId)
+    .then((data: Message[])=>{
+      setMessagesData(data);
+    })
+    .catch(error => {
+      console.error("Cannot fetch message streams:", error);
+    });
+  }, [token]);
 
   // logout function
   const handleLogout = () => {
@@ -46,10 +75,9 @@ export const App: React.FC = () => {
             items={course}
             onSelect={(item) => setSelected(item)}
           />
-          <div>
-            Chat interface will go here
-            <Menu messages={["Bob", "Buddy"]} />
-          </div>
+         <div>Chat interface will go here
+            <Menu messagesData={messagesData}/>
+        </div>
         </>
       )}
     </div>
