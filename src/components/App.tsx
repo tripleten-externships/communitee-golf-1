@@ -4,11 +4,10 @@ import {
   getMessageStreams,
 } from "./utils/api.tsx";
 
-import {AUTH_TOKEN_KEY} from "./LoginForm.tsx"
-
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
+import { useAuth } from "../contexts/useAuth";
 import { Dropdown } from "./Dropdown";
 import Menu from "./Menu";
 
@@ -16,7 +15,7 @@ export const App: React.FC = () => {
   // import get locations in a later ticket
   const locationId = "2";
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isAuthenticated, logout, token } = useAuth();
   const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -31,7 +30,8 @@ export const App: React.FC = () => {
   const [messagesData, setMessagesData] = useState<Message[]>([]);
 
   useEffect(()=>{
-    getMessageStreams(AUTH_TOKEN_KEY, locationId)
+    if(!token) return;
+    getMessageStreams(token, locationId)
     .then((data: Message[])=>{
       console.log(data);
       setMessagesData(data);
@@ -39,18 +39,14 @@ export const App: React.FC = () => {
     .catch(error => {
       console.error("Cannot fetch message streams:", error);
     });
-  }, []);
+  }, [token]);
 
   // logout function
   const handleLogout = () => {
-    try {
-      chrome.storage.local.set({ authToken: "" });
-    } catch {
-      localStorage.removeItem("authToken");
-    }
-    setIsLoggedIn(false);
+    logout();
     setCurrentView("login");
   };
+  
   const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   return (
@@ -59,14 +55,12 @@ export const App: React.FC = () => {
       <Header
         onClose={() => window.close()}
         onLogout={handleLogout}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={isAuthenticated}
       />
-      {!isLoggedIn ? (
+      {!isAuthenticated ? (
         currentView === "login" ? (
           <LoginForm
-            onLogin={() => {
-              setIsLoggedIn(true);
-            }}
+            onLogin={() => {}}
             onForgotPassword={() => setCurrentView("forgot")}
           />
         ) : (
