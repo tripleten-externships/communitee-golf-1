@@ -1,5 +1,6 @@
 import type {Meta, StoryObj} from "@storybook/react";
 import { Menu, Message} from "./Menu";
+import { AuthProvider } from "../contexts/AuthContext";
 
 const mockLocations = [
     { id: "1", name: "Pine Valley Golf Club" },
@@ -45,6 +46,13 @@ const mockMessagesData: Message[] = [
 const meta: Meta<typeof Menu> = {
     title: "Components/Menu",
     component: Menu,
+    decorators: [
+        (Story) =>(
+            <AuthProvider>
+                <Story />
+            </AuthProvider>
+        )
+    ]
   };
 
 export default meta;

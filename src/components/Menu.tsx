@@ -2,7 +2,6 @@ import React, {useState, useEffect} from "react";
 
 import {
     getMessageStreams,
-    getLocations,
 } from "./utils/api.tsx";
 
 import MessagePreview from "./MessagePreview";
@@ -16,30 +15,22 @@ export interface Message {
     lastMessage: string;
     locationId: string;
 }
+export interface Location{
+    id: string;
+    name: string;
+}
 export interface MenuProps {
     selected: string | null;
+    locations: Location[];
     messagesArray?: Message[];
 }
 
-export const Menu: React.FC<MenuProps> = ({ selected, messagesArray }) => {
+export const Menu: React.FC<MenuProps> = ({ selected, locations, messagesArray }) => {
     // setting locationId
     const [locationId, setLocationId] = useState("0");
-    const [locations, setLocations] = useState<{id: string; name: string}[]>([]);
     const { token } = useAuth();
     const [messagesData, setMessagesData] = useState<Message[]>(messagesArray ?? []);
     const shouldFetch = !messagesArray;
-
-    // getting locations from mock api
-    useEffect(()=>{
-        if(!token || !shouldFetch) return;
-        getLocations(token)
-        .then((data)=>{
-            setLocations(data);
-        })
-        .catch((error)=>{
-            console.error("Cannot fetch location:", error);
-        })
-    },[shouldFetch, token]);
 
     // finding the right location based on selection
     useEffect(()=>{

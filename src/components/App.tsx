@@ -14,14 +14,16 @@ export const App: React.FC = () => {
   const { isAuthenticated, logout, token } = useAuth();
   const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
-  const [course, setCourse] = useState<string[]>([]);
+  const [locations, setLocations] = useState<{id: string; name: string}[]>([]);
+  const [courses, setCourses] = useState<string[]>([]);
 
   // get locations for the course
   useEffect(()=>{
     if(!token) return;
     getLocations(token)
     .then((data)=>{
-        setCourse([data[0].name, data[1].name, data[2].name]);
+        setLocations(data);
+        setCourses([data[0].name, data[1].name, data[2].name]);
     })
     .catch((error)=>{
         console.error("Cannot fetch locations:", error);
@@ -32,6 +34,7 @@ export const App: React.FC = () => {
   const handleLogout = () => {
     logout();
     setCurrentView("login");
+    setLocations([]);
   };
   
   return (
@@ -56,10 +59,10 @@ export const App: React.FC = () => {
           <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">Location</div>
           <Dropdown
             buttonText={selected ?? "Selected option"}
-            items={course}
+            items={courses}
             onSelect={(item) => setSelected(item)}
           />
-          <Menu selected={selected}/>
+          <Menu selected={selected} locations={locations}/>
         </>
       )}
     </div>
