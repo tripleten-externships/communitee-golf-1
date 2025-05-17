@@ -82,7 +82,7 @@ export const PineValleyGolfClub: Story = {
 
 export const AugustaNationalGolfClub: Story = {
     args: {
-        selected: mockLocations[0].name,
+        selected: mockLocations[1].name,
         locations: mockLocations,
         messagesArray: getMessagesForSelected("2"),
       },
@@ -90,7 +90,7 @@ export const AugustaNationalGolfClub: Story = {
 
 export const PebbleBeachGolfLinks: Story = {
     args: {
-        selected: mockLocations[0].name,
+        selected: mockLocations[2].name,
         locations: mockLocations,
         messagesArray: getMessagesForSelected("3"),
       },
