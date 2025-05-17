@@ -1,4 +1,4 @@
-import type {Meta, StoryObj} from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import { Menu, Message} from "./Menu";
 import { AuthProvider } from "../contexts/AuthContext";
 
@@ -11,7 +11,7 @@ const mockLocations = [
 const mockMessagesData: Message[] = [
     {
         clientName: "Bob Buddy Boy",
-        clientImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAAEW0lEQVR4nOzdO6sQZBzHcY+e4kSRENhtyDBwsMGIhkqIJOzo1BIRJiVESBJhkUu12G0IRAiDoOg6mUVbRmAN3aFwOkPRIJYFhlOQJgW9ij8E38/nBfye6ct/fBbfuufqVZN27l4e3d+4/83R/Y8+/Wp0//3Hvxzd33nu29H99Rs+HN1feezm0f3Vo+vwPycA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQtXLt0bPSBo4feHt3ffGHr6P71x9eN7u97/eDo/o83nR3dP7hl9v+EB/d9MrrvApAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkLW46vWH0gbWv/jq6/9p3a0f3Tx24eHT/uX9vGN1/+JfPRvdXjhwa3T/6xbOj+y4AaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQNrCe++8MPrA93fMNnbljlOj+6uveWV0//Z7Xxrd37Rl1+j+9tueGt1/5I3To/suAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBEDawtLhy0cf+Ovj30f3N1769Oj+seXR+VUnlmf/N7j1m/tH95dvPDe6//xv20b3XQDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmAtMWHtjw6+sDu3f+M7v9x+Mzo/t9rnhzd/+m+q0b3X1z78uj+/h8+H91fObl9dN8FIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEhbPHn4/OgDC0t7Rvf37vpgdP/82XdH98+sOz66f8niidH9lcsujO5v3XvR6L4LQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZC2uOvn60Yf2HPkidH9W5ZmG96x/s/R/TUPfD26f+DOK0b37978zOj+XZu2je67AKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBp/wUAAP//qpZcY30c7KAAAAAASUVORK5CYII=',
+        clientImage: 'https://example.com/image1.jpg',
         unreadCount: 0,
         lastMessageAt: Date.now() - 68000,
         lastMessage: "Short message",
@@ -19,7 +19,7 @@ const mockMessagesData: Message[] = [
     },
     {
         clientName: "Bobby Bot",
-        clientImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAAEW0lEQVR4nOzdO6sQZBzHcY+e4kSRENhtyDBwsMGIhkqIJOzo1BIRJiVESBJhkUu12G0IRAiDoOg6mUVbRmAN3aFwOkPRIJYFhlOQJgW9ij8E38/nBfye6ct/fBbfuufqVZN27l4e3d+4/83R/Y8+/Wp0//3Hvxzd33nu29H99Rs+HN1feezm0f3Vo+vwPycA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQtXLt0bPSBo4feHt3ffGHr6P71x9eN7u97/eDo/o83nR3dP7hl9v+EB/d9MrrvApAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkLW46vWH0gbWv/jq6/9p3a0f3Tx24eHT/uX9vGN1/+JfPRvdXjhwa3T/6xbOj+y4AaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQNrCe++8MPrA93fMNnbljlOj+6uveWV0//Z7Xxrd37Rl1+j+9tueGt1/5I3To/suAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBEDawtLhy0cf+Ovj30f3N1769Oj+seXR+VUnlmf/N7j1m/tH95dvPDe6//xv20b3XQDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmAtMWHtjw6+sDu3f+M7v9x+Mzo/t9rnhzd/+m+q0b3X1z78uj+/h8+H91fObl9dN8FIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEhbPHn4/OgDC0t7Rvf37vpgdP/82XdH98+sOz66f8niidH9lcsujO5v3XvR6L4LQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZC2uOvn60Yf2HPkidH9W5ZmG96x/s/R/TUPfD26f+DOK0b37978zOj+XZu2je67AKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBp/wUAAP//qpZcY30c7KAAAAAASUVORK5CYII=',
+        clientImage: 'https://example.com/image1.jpg',
         unreadCount: 70,
         lastMessageAt: Date.now() - 95000,
         lastMessage: "Short message",
@@ -27,21 +27,27 @@ const mockMessagesData: Message[] = [
     },
     {
         clientName: "Carson Carl Jr.",
-        clientImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAAEW0lEQVR4nOzdO6sQZBzHcY+e4kSRENhtyDBwsMGIhkqIJOzo1BIRJiVESBJhkUu12G0IRAiDoOg6mUVbRmAN3aFwOkPRIJYFhlOQJgW9ij8E38/nBfye6ct/fBbfuufqVZN27l4e3d+4/83R/Y8+/Wp0//3Hvxzd33nu29H99Rs+HN1feezm0f3Vo+vwPycA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQtXLt0bPSBo4feHt3ffGHr6P71x9eN7u97/eDo/o83nR3dP7hl9v+EB/d9MrrvApAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkLW46vWH0gbWv/jq6/9p3a0f3Tx24eHT/uX9vGN1/+JfPRvdXjhwa3T/6xbOj+y4AaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQNrCe++8MPrA93fMNnbljlOj+6uveWV0//Z7Xxrd37Rl1+j+9tueGt1/5I3To/suAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBEDawtLhy0cf+Ovj30f3N1769Oj+seXR+VUnlmf/N7j1m/tH95dvPDe6//xv20b3XQDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmAtMWHtjw6+sDu3f+M7v9x+Mzo/t9rnhzd/+m+q0b3X1z78uj+/h8+H91fObl9dN8FIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEhbPHn4/OgDC0t7Rvf37vpgdP/82XdH98+sOz66f8niidH9lcsujO5v3XvR6L4LQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZC2uOvn60Yf2HPkidH9W5ZmG96x/s/R/TUPfD26f+DOK0b37978zOj+XZu2je67AKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBp/wUAAP//qpZcY30c7KAAAAAASUVORK5CYII=',
+        clientImage: 'https://example.com/image1.jpg',
         unreadCount: 2,
         lastMessageAt: Date.now() - 6800000,
         lastMessage: "This is a long message, where the sentence is very redundant and long because it is long",
-        locationId: "1"
+        locationId: "2"
     },
     {
         clientName: "Kaytlyn Lyn Lynda",
-        clientImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAAEW0lEQVR4nOzdO6sQZBzHcY+e4kSRENhtyDBwsMGIhkqIJOzo1BIRJiVESBJhkUu12G0IRAiDoOg6mUVbRmAN3aFwOkPRIJYFhlOQJgW9ij8E38/nBfye6ct/fBbfuufqVZN27l4e3d+4/83R/Y8+/Wp0//3Hvxzd33nu29H99Rs+HN1feezm0f3Vo+vwPycA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQtXLt0bPSBo4feHt3ffGHr6P71x9eN7u97/eDo/o83nR3dP7hl9v+EB/d9MrrvApAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkLW46vWH0gbWv/jq6/9p3a0f3Tx24eHT/uX9vGN1/+JfPRvdXjhwa3T/6xbOj+y4AaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQNrCe++8MPrA93fMNnbljlOj+6uveWV0//Z7Xxrd37Rl1+j+9tueGt1/5I3To/suAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBEDawtLhy0cf+Ovj30f3N1769Oj+seXR+VUnlmf/N7j1m/tH95dvPDe6//xv20b3XQDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmAtMWHtjw6+sDu3f+M7v9x+Mzo/t9rnhzd/+m+q0b3X1z78uj+/h8+H91fObl9dN8FIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEhbPHn4/OgDC0t7Rvf37vpgdP/82XdH98+sOz66f8niidH9lcsujO5v3XvR6L4LQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZC2uOvn60Yf2HPkidH9W5ZmG96x/s/R/TUPfD26f+DOK0b37978zOj+XZu2je67AKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBp/wUAAP//qpZcY30c7KAAAAAASUVORK5CYII=',
+        clientImage: 'https://example.com/image1.jpg',
         unreadCount: 50,
         lastMessageAt: Date.now() - 2400000,
         lastMessage: "this is a long message, where the sentence is very redundant and long because it is long",
-        locationId: "1"
+        locationId: "3"
     },
 ];
+
+function getMessagesForSelected(selected: string | null) {
+    if (!selected) return [];
+    return mockMessagesData.filter(msg => msg.locationId === selected);
+  }
+  
 
 const meta: Meta<typeof Menu> = {
     title: "Components/Menu",
@@ -61,13 +67,31 @@ type Story = StoryObj<typeof Menu>;
 
 export const Default: Story = {
     args: {
-        selected: null,
+      selected: null,
+      locations: [],
+    },
+};
+
+export const PineValleyGolfClub: Story = {
+    args: {
+        selected: mockLocations[0].name,
+        locations: mockLocations,
+        messagesArray: getMessagesForSelected("1"),
       },
 };
 
-export const WithMessages: Story = {
+export const AugustaNationalGolfClub: Story = {
     args: {
-      selected: mockLocations[1].name,
-      messagesArray: mockMessagesData,
-    },
+        selected: mockLocations[0].name,
+        locations: mockLocations,
+        messagesArray: getMessagesForSelected("2"),
+      },
+};
+
+export const PebbleBeachGolfLinks: Story = {
+    args: {
+        selected: mockLocations[0].name,
+        locations: mockLocations,
+        messagesArray: getMessagesForSelected("3"),
+      },
 };

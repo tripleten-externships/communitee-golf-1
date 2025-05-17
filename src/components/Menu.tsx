@@ -30,7 +30,7 @@ export const Menu: React.FC<MenuProps> = ({ selected, locations, messagesArray }
     const [locationId, setLocationId] = useState("0");
     const { token } = useAuth();
     const [messagesData, setMessagesData] = useState<Message[]>(messagesArray ?? []);
-    const shouldFetch = !messagesArray;
+    const shouldFetch = !messagesArray && !!locations?.length;
 
     // finding the right location based on selection
     useEffect(()=>{
