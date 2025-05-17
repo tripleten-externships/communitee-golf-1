@@ -34,7 +34,7 @@ export const JustNow: Story = {
       clientImage: "/pfp_img-placeholder.jpg", // Added picture
       unreadCount: 4,
       lastMessage: "A message sent just now.",
-      lastMessageAt: Date.now() - 30 * 1000, // 30 seconds ago
+      lastMessageAt: new Date(Date.now() - 30 * 1000).toISOString(), // 30 seconds ago
     },
   },
   parameters: {
@@ -54,7 +54,7 @@ export const MinutesAgo: Story = {
       clientImage: "/pfp_img-placeholder.jpg", // Added picture
       unreadCount: 1,
       lastMessage: "A message from a few minutes ago.",
-      lastMessageAt: Date.now() - 15 * 60 * 1000, // 15 minutes ago
+      lastMessageAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
     },
   },
   parameters: {
@@ -75,7 +75,7 @@ export const HoursAgo: Story = {
       clientImage: "/pfp_img-placeholder.jpg", // Added picture
       unreadCount: 0,
       lastMessage: "A message from a few hours ago.",
-      lastMessageAt: Date.now() - 3 * 60 * 60 * 1000, // 3 hours ago
+      lastMessageAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
     },
   },
   parameters: {
@@ -104,7 +104,7 @@ export const Yesterday: Story = {
       clientImage: "/pfp_img-placeholder.jpg", // Added picture
       unreadCount: 10,
       lastMessage: "A message sent yesterday.",
-      lastMessageAt: yesterdayTimestamp, // Timestamp set to yesterday noon
+      lastMessageAt: new Date(yesterdayTimestamp).toISOString(), // Timestamp set to yesterday noon
     },
   },
   parameters: {
@@ -127,7 +127,9 @@ export const TwoDaysAgo: Story = {
       clientImage: "/pfp_img-placeholder.jpg", // Added picture
       unreadCount: 100,
       lastMessage: "A message from exactly two days ago.",
-      lastMessageAt: Date.now() - 2 * 24 * 60 * 60 * 1000 - 1000, // 2 days ago minus a second to be sure `days` is 2
+      lastMessageAt: new Date(
+        Date.now() - 2 * 24 * 60 * 60 * 1000 - 1000
+      ).toISOString(), // 2 days ago minus a second to be sure `days` is 2
     },
   },
   parameters: {
@@ -147,7 +149,9 @@ export const ThreeDaysAgo: Story = {
       clientImage: "/pfp_img-placeholder.jpg", // Added picture
       unreadCount: -1,
       lastMessage: "A message from three days ago.",
-      lastMessageAt: Date.now() - 3 * 24 * 60 * 60 * 1000 - 1000, // 3 days ago minus a second
+      lastMessageAt: new Date(
+        Date.now() - 3 * 24 * 60 * 60 * 1000 - 1000
+      ).toISOString(), // 3 days ago minus a second
     },
   },
   parameters: {
@@ -168,7 +172,9 @@ export const SixDaysAgo: Story = {
       unreadCount: 10,
       lastMessage:
         "A message from six days ago. This also has some extra text.",
-      lastMessageAt: Date.now() - 6 * 24 * 60 * 60 * 1000 - 1000, // 6 days ago minus a second
+      lastMessageAt: new Date(
+        Date.now() - 6 * 24 * 60 * 60 * 1000 - 1000
+      ).toISOString(), // 6 days ago minus a second
     },
   },
   parameters: {
@@ -191,7 +197,9 @@ export const SevenDaysAgo: Story = {
       unreadCount: 99,
       lastMessage:
         "A message from exactly seven days ago. And it has some extra text.",
-      lastMessageAt: Date.now() - 7 * 24 * 60 * 60 * 1000, // Exactly 7 days ago
+      lastMessageAt: new Date(
+        Date.now() - 7 * 24 * 60 * 60 * 1000
+      ).toISOString(), // Exactly 7 days ago
     },
   },
   parameters: {
@@ -212,7 +220,7 @@ export const FixedDateInPast: Story = {
       clientImage: "/pfp_img-placeholder.jpg", // Added picture
       unreadCount: 1,
       lastMessage: "A message from a specific fixed date.",
-      lastMessageAt: fixedDateInPastTimestamp,
+      lastMessageAt: new Date(fixedDateInPastTimestamp).toISOString(),
     },
   },
   parameters: {
