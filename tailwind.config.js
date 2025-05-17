@@ -26,6 +26,7 @@ export default {
         "black-bg": "#1c1919",
         "text-on-black-bg": "#b1acac",
         "red-orange": "#ff3131",
+        "orange-text-bubble": "rgba(255, 223, 223, 1)",
       },
     },
   },

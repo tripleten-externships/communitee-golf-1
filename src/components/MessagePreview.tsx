@@ -5,7 +5,7 @@ interface MessagePreviewProps {
     clientName: string;
     clientImage: string;
     unreadCount: number;
-    lastMessageAt: number;
+    lastMessageAt: string;
     lastMessage: string;
   };
 }
@@ -24,6 +24,7 @@ const MessagePreview: React.FC<MessagePreviewProps> = ({ previewProps }) => {
         bg-alt-grey
         text-border-grey
         text-sm
+        cursor-pointer
       "
     >
       <img
@@ -72,7 +73,9 @@ const MessagePreview: React.FC<MessagePreviewProps> = ({ previewProps }) => {
           leading-[1]
         "
       >
-        <TimePassed timestamp={previewProps.lastMessageAt} />
+        <TimePassed
+          timestamp={new Date(previewProps.lastMessageAt).getTime()}
+        />
       </div>
     </div>
   );

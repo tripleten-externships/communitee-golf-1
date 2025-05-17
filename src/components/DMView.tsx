@@ -1,6 +1,13 @@
-// src/components/DMView.tsx
 import React, { useState } from "react";
 import TimePassed from "./TimePassed";
+import MessageBubble from "./Message";
+
+export interface ThreadMsg {
+  id: string;
+  content: string;
+  sentAt: string;
+  senderId: string;
+}
 
 export interface Message {
   messageid: string;
@@ -11,16 +18,18 @@ export interface Message {
 }
 
 interface DMViewProps {
+  thread: ThreadMsg[];
   message: Message;
   onBack: () => void;
+  onSend: (content: string) => Promise<void>;
 }
 
-const DMView: React.FC<DMViewProps> = ({ message, onBack }) => {
+const DMView: React.FC<DMViewProps> = ({ message, onBack, onSend, thread }) => {
   const [draft, setDraft] = useState("");
 
-  const sendMessage = () => {
-    // TODO: wire up your send handler
-    console.log("send", draft);
+  const handleSend = async () => {
+    if (!draft.trim()) return;
+    await onSend(draft);
     setDraft("");
   };
 
@@ -51,14 +60,24 @@ const DMView: React.FC<DMViewProps> = ({ message, onBack }) => {
 
       {/* Chat history */}
       <div className="flex-1 overflow-y-auto">
-        <div className="mb-6">
-          <p className="text-[10px] text-gray-500 mb-1">
-            <TimePassed timestamp={message.timestamp} />
-          </p>
-          <div className="inline-block bg-gray-100 rounded-xl px-4 py-2 mr-10 text-sm">
-            {message.text}
-          </div>
-        </div>
+        {thread.map((msg) => {
+          const isOutbound = msg.senderId === "manager";
+          const timestamp = new Date(msg.sentAt).getTime();
+
+          return (
+            <div
+              key={msg.id}
+              className={`mb-2 flex flex-col ${
+                isOutbound ? "items-end" : "items-start"
+              }`}
+            >
+              <p className="text-[10px] text-gray-500 mb-1">
+                <TimePassed timestamp={timestamp} />
+              </p>
+              <MessageBubble message={msg.content} isSent={isOutbound} />
+            </div>
+          );
+        })}
       </div>
 
       {/* Input */}
@@ -68,12 +87,12 @@ const DMView: React.FC<DMViewProps> = ({ message, onBack }) => {
             type="text"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Write a message…"
-            className="w-full px-4 py-1 border rounded-lg focus:outline-none poppins font-regular text-base"
+            className="w-full px-4 py-1 pr-10 border rounded-lg focus:outline-none poppins font-regular text-base"
           />
           <button
-            onClick={sendMessage}
+            onClick={handleSend}
             className="absolute right-3 top-1/2 -translate-y-1/2"
           >
             <img
