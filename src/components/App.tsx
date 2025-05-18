@@ -1,53 +1,42 @@
 import React, {useState, useEffect} from "react";
-
 import {
-  getMessageStreams,
+  getLocations,
 } from "./utils/api.tsx";
 
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
-import { useAuth } from "../contexts/useAuth";
+import { useAuth } from "../contexts/useAuth.ts";
 import { Dropdown } from "./Dropdown";
-import Menu from "./Menu";
+import { Menu } from "./Menu";
 
 export const App: React.FC = () => {
-  // import get locations in a later ticket
-  const locationId = "2";
-
   const { isAuthenticated, logout, token } = useAuth();
   const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
+  const [locations, setLocations] = useState<{id: string; name: string}[]>([]);
+  const [courses, setCourses] = useState<string[]>([]);
 
-  // setting messages array
-  interface Message {
-    clientName: string;
-    clientImage: string;
-    unreadCount: number;
-    lastMessageAt: number;
-    lastMessage: string;
-}
-  const [messagesData, setMessagesData] = useState<Message[]>([]);
-
+  // get locations for the course
   useEffect(()=>{
     if(!token) return;
-    getMessageStreams(token, locationId)
-    .then((data: Message[])=>{
-      setMessagesData(data);
+    getLocations(token)
+    .then((data)=>{
+        setLocations(data);
+        setCourses([data[0].name, data[1].name, data[2].name]);
     })
-    .catch(error => {
-      console.error("Cannot fetch message streams:", error);
-    });
-  }, [token]);
+    .catch((error)=>{
+        console.error("Cannot fetch locations:", error);
+    })
+  },[token]);
 
   // logout function
   const handleLogout = () => {
     logout();
     setCurrentView("login");
+    setLocations([]);
   };
   
-  const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
-
   return (
     // main styling for chrome extension
     <div className="relative bg-white rounded-2xl shadow-lg p-5 w-[336px] h-[595px] border border-alt-grey">
@@ -67,17 +56,13 @@ export const App: React.FC = () => {
         )
       ) : (
         <>
-          <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
-            Location
-          </div>
+          <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">Location</div>
           <Dropdown
             buttonText={selected ?? "Selected option"}
-            items={course}
+            items={courses}
             onSelect={(item) => setSelected(item)}
           />
-         <div>Chat interface will go here
-            <Menu messagesData={messagesData}/>
-        </div>
+          <Menu selected={selected} locations={locations}/>
         </>
       )}
     </div>
