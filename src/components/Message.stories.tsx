@@ -87,3 +87,51 @@ export const ReceivedSmallPhrase: Story = {
     isSent: false,
   },
 };
+
+// Message with newlines - sent
+export const SentWithNewlines: Story = {
+  args: {
+    message: "First line\nSecond line\nThird line",
+    isSent: true,
+  },
+};
+
+// Message with newlines - received
+export const ReceivedWithNewlines: Story = {
+  args: {
+    message: "Line one\nLine two\nAnd a third line that's also quite long",
+    isSent: false,
+  },
+};
+
+// Message with only newlines - sent
+export const JustNewlines: Story = {
+  args: {
+    message: "\n\n\n\n\n\n\n\n\n\n\n",
+    isSent: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "This should be disallowed from within the component that submits the message.",
+      },
+    },
+  },
+};
+
+// Message with only spaces - received
+export const JustSpaces: Story = {
+  args: {
+    message: "                         ",
+    isSent: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "This should also be disallowed from within the component that submits the message.",
+      },
+    },
+  },
+};
