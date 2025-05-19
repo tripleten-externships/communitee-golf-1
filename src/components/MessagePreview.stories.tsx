@@ -245,7 +245,7 @@ export const NoImageFallback: Story = {
       clientImage: "",
       unreadCount: 2,
       lastMessage: "This user has no profile picture.",
-      lastMessageAt: Date.now() - 60 * 1000, // 1 minute ago
+      lastMessageAt: new Date(Date.now() - 60 * 1000).toISOString(), // 1 minute ago
     },
   },
   parameters: {
@@ -266,7 +266,7 @@ export const BrokenImageFallback: Story = {
       clientImage: "https://www.fakestuff.example/fakeImage", // Invalid path
       unreadCount: 3,
       lastMessage: "Image failed to load.",
-      lastMessageAt: Date.now() - 5 * 60 * 1000, // 5 minutes ago
+      lastMessageAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 minutes ago
     },
   },
   parameters: {
