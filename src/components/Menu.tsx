@@ -46,7 +46,7 @@ const Menu: React.FC<MenuProps> = ({
 
   useEffect(() => {
     if (!shouldFetch || !selected) return;
-    const found = locations.find((loc) => loc.name === selected);
+    const found = locations.find((location) => location.name === selected);
     setLocationId(found ? found.id : "");
   }, [selected, locations, shouldFetch]);
 
