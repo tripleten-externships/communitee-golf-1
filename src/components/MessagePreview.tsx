@@ -31,6 +31,7 @@ const MessagePreview: React.FC<MessagePreviewProps> = ({ previewProps }) => {
         src={previewProps.clientImage}
         alt={`${previewProps.clientName}'s profile picture`}
         className="w-[36px] h-[36px] rounded-full object-cover"
+        onError={(e) => (e.currentTarget.src = "/pfp_img-placeholder.jpg")}
       />
       {previewProps.unreadCount > 0 && (
         <p

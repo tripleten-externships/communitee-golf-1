@@ -4,23 +4,27 @@ import {
   getMessageStreams,
   sendMessage as apiSend,
   getSingleMessageStream,
+  getLocations,
 } from "./utils/api";
+
 import { Header } from "./Header";
 import { LoginForm } from "./LoginForm";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
-import { useAuth } from "../contexts/useAuth";
 import { Dropdown } from "./Dropdown";
 import DMView, { Message as DMMessage } from "./DMView";
 import Menu, { Message as MenuMessage } from "./Menu";
 
-export const App: React.FC = () => {
-  // import get locations in a later ticket
-  const locationId = "2";
+import { useAuth } from "../contexts/useAuth.ts";
 
+export const App: React.FC = () => {
   const { isAuthenticated, logout, token } = useAuth();
   const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
-
+  const [locations, setLocations] = useState<{ id: string; name: string }[]>(
+    []
+  );
+  const [locationId, setLocationId] = useState<string>("");
+  const [courses, setCourses] = useState<string[]>([]);
   const [messagesData, setMessagesData] = useState<MenuMessage[]>([]);
   const [activeDm, setActiveDm] = useState<DMMessage | null>(null);
   const [thread, setThread] = useState<
@@ -32,21 +36,38 @@ export const App: React.FC = () => {
     }[]
   >([]);
 
+  // get locations for the course
   useEffect(() => {
     if (!token) return;
-    getMessageStreams(token, locationId)
-      .then((data: MenuMessage[]) => {
-        setMessagesData(data);
+    getLocations(token)
+      .then((data) => {
+        setLocations(data);
+        setCourses(data.map((location: { name: any }) => location.name));
+        if (!selected && data.length) setSelected(data[0].name);
       })
-      .catch((error) => {
-        console.error("Cannot fetch message streams:", error);
-      });
+      .catch((err) => console.error("Cannot fetch locations:", err));
   }, [token]);
+
+  // whenever the user picks a different course, update locationId
+  useEffect(() => {
+    if (!selected) return;
+    const match = locations.find((loc) => loc.name === selected);
+    setLocationId(match ? match.id : "");
+  }, [selected, locations]);
+
+  // fetch message‐streams for the current location
+  useEffect(() => {
+    if (!token || !locationId) return;
+    getMessageStreams(token, locationId)
+      .then((data: MenuMessage[]) => setMessagesData(data))
+      .catch((err) => console.error("Cannot fetch message streams:", err));
+  }, [token, locationId]);
 
   // logout function
   const handleLogout = () => {
     logout();
     setCurrentView("login");
+    setLocations([]);
   };
 
   // const handleSelect = async (m: MenuMessage) => {
@@ -85,7 +106,7 @@ export const App: React.FC = () => {
     });
   };
 
-  const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
+  // const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   return (
     // main styling for chrome extension
@@ -114,7 +135,7 @@ export const App: React.FC = () => {
               </div>
               <Dropdown
                 buttonText={selected ?? "Select Location"}
-                items={course}
+                items={courses}
                 onSelect={(item) => setSelected(item)}
               />
             </>
@@ -152,7 +173,12 @@ export const App: React.FC = () => {
               }}
             />
           ) : (
-            <Menu messagesData={messagesData} onSelect={handleSelect} />
+            <Menu
+              locations={locations}
+              selected={selected}
+              messagesArray={messagesData}
+              onSelect={handleSelect}
+            />
           )}
         </>
       )}

@@ -1,52 +1,112 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Menu from "./Menu";
+import { action } from "@storybook/addon-actions";
+import { AuthProvider } from "../contexts/AuthContext";
+import Menu, { Message } from "./Menu";
+
+const mockLocations = [
+  { id: "1", name: "Pine Valley Golf Club" },
+  { id: "2", name: "Augusta National Golf Club" },
+  { id: "3", name: "Pebble Beach Golf Links" },
+];
+
+const now = Date.now();
+const mockMessagesData: Message[] = [
+  {
+    id: "msg-1",
+    clientName: "Bob Buddy Boy",
+    clientImage: "https://example.com/image1.jpg",
+    unreadCount: 0,
+    lastMessageAt: new Date(now - 68_000).toISOString(),
+    lastMessage: "Short message",
+    locationId: "1",
+  },
+  {
+    id: "msg-2",
+    clientName: "Bobby Bot",
+    clientImage: "https://example.com/image2.jpg",
+    unreadCount: 70,
+    lastMessageAt: new Date(now - 95_000).toISOString(),
+    lastMessage: "Short message",
+    locationId: "1",
+  },
+  {
+    id: "msg-3",
+    clientName: "Carson Carl Jr.",
+    clientImage: "https://example.com/image3.jpg",
+    unreadCount: 2,
+    lastMessageAt: new Date(now - 6_800_000).toISOString(),
+    lastMessage:
+      "This is a long message, where the sentence is very redundant and long because it is long",
+    locationId: "2",
+  },
+  {
+    id: "msg-4",
+    clientName: "Kaytlyn Lyn Lynda",
+    clientImage: "https://example.com/image4.jpg",
+    unreadCount: 50,
+    lastMessageAt: new Date(now - 2_400_000).toISOString(),
+    lastMessage:
+      "This is another long message, testing multiline display in the preview",
+    locationId: "3",
+  },
+];
+
+function getMessagesFor(selected: string | null) {
+  return selected
+    ? mockMessagesData.filter(
+        (m) =>
+          m.locationId === mockLocations.find((l) => l.name === selected)!.id
+      )
+    : [];
+}
 
 const meta: Meta<typeof Menu> = {
   title: "Components/Menu",
   component: Menu,
+  decorators: [
+    (Story) => (
+      <AuthProvider>
+        <Story />
+      </AuthProvider>
+    ),
+  ],
 };
-
 export default meta;
+
 type Story = StoryObj<typeof Menu>;
 
 export const Default: Story = {
   args: {
-    messagesData: [],
+    selected: null,
+    locations: mockLocations,
+    messagesArray: [],
+    onSelect: action("onSelect"),
   },
 };
 
-export const WithMessages: Story = {
+export const PineValley: Story = {
   args: {
-    messagesData: [
-      {
-        id: "1",
-        clientName: "Bob Buddy Boy",
-        clientImage:
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAAEW0lEQVR4nOzdO6sQZBzHcY+e4kSRENhtyDBwsMGIhkqIJOzo1BIRJiVESBJhkUu12G0IRAiDoOg6mUVbRmAN3aFwOkPRIJYFhlOQJgW9ij8E38/nBfye6ct/fBbfuufqVZN27l4e3d+4/83R/Y8+/Wp0//3Hvxzd33nu29H99Rs+HN1feezm0f3Vo+vwPycA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQtXLt0bPSBo4feHt3ffGHr6P71x9eN7u97/eDo/o83nR3dP7hl9v+EB/d9MrrvApAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkLW46vWH0gbWv/jq6/9p3a0f3Tx24eHT/uX9vGN1/+JfPRvdXjhwa3T/6xbOj+y4AaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQNrCe++8MPrA93fMNnbljlOj+6uveWV0//Z7Xxrd37Rl1+j+9tueGt1/5I3To/suAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBEDawtLhy0cf+Ovj30f3N1769Oj+seXR+VUnlmf/N7j1m/tH95dvPDe6//xv20b3XQDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmAtMWHtjw6+sDu3f+M7v9x+Mzo/t9rnhzd/+m+q0b3X1z78uj+/h8+H91fObl9dN8FIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEhbPHn4/OgDC0t7Rvf37vpgdP/82XdH98+sOz66f8niidH9lcsujO5v3XvR6L4LQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZC2uOvn60Yf2HPkidH9W5ZmG96x/s/R/TUPfD26f+DOK0b37978zOj+XZu2je67AKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBp/wUAAP//qpZcY30c7KAAAAAASUVORK5CYII=",
-        unreadCount: 0,
-        lastMessageAt: new Date(Date.now() - 68000).toISOString(),
-        lastMessage: "Short message",
-      },
-      {
-        id: "2",
-        clientName: "Carson Carl Jr.",
-        clientImage:
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAAEW0lEQVR4nOzdO6sQZBzHcY+e4kSRENhtyDBwsMGIhkqIJOzo1BIRJiVESBJhkUu12G0IRAiDoOg6mUVbRmAN3aFwOkPRIJYFhlOQJgW9ij8E38/nBfye6ct/fBbfuufqVZN27l4e3d+4/83R/Y8+/Wp0//3Hvxzd33nu29H99Rs+HN1feezm0f3Vo+vwPycA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQtXLt0bPSBo4feHt3ffGHr6P71x9eN7u97/eDo/o83nR3dP7hl9v+EB/d9MrrvApAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkLW46vWH0gbWv/jq6/9p3a0f3Tx24eHT/uX9vGN1/+JfPRvdXjhwa3T/6xbOj+y4AaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQNrCe++8MPrA93fMNnbljlOj+6uveWV0//Z7Xxrd37Rl1+j+9tueGt1/5I3To/suAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBEDawtLhy0cf+Ovj30f3N1769Oj+seXR+VUnlmf/N7j1m/tH95dvPDe6//xv20b3XQDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmAtMWHtjw6+sDu3f+M7v9x+Mzo/t9rnhzd/+m+q0b3X1z78uj+/h8+H91fObl9dN8FIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEhbPHn4/OgDC0t7Rvf37vpgdP/82XdH98+sOz66f8niidH9lcsujO5v3XvR6L4LQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZC2uOvn60Yf2HPkidH9W5ZmG96x/s/R/TUPfD26f+DOK0b37978zOj+XZu2je67AKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBp/wUAAP//qpZcY30c7KAAAAAASUVORK5CYII=",
-        unreadCount: 2,
-        lastMessageAt: new Date(Date.now() - 6800000).toISOString(),
-        lastMessage:
-          "This is a long message, where the sentence is very redundant and long because it is long",
-      },
-      {
-        id: "3",
-        clientName: "Kaytlyn Lyn Lynda",
-        clientImage:
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAAEW0lEQVR4nOzdO6sQZBzHcY+e4kSRENhtyDBwsMGIhkqIJOzo1BIRJiVESBJhkUu12G0IRAiDoOg6mUVbRmAN3aFwOkPRIJYFhlOQJgW9ij8E38/nBfye6ct/fBbfuufqVZN27l4e3d+4/83R/Y8+/Wp0//3Hvxzd33nu29H99Rs+HN1feezm0f3Vo+vwPycA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQtXLt0bPSBo4feHt3ffGHr6P71x9eN7u97/eDo/o83nR3dP7hl9v+EB/d9MrrvApAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkLW46vWH0gbWv/jq6/9p3a0f3Tx24eHT/uX9vGN1/+JfPRvdXjhwa3T/6xbOj+y4AaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQNrCe++8MPrA93fMNnbljlOj+6uveWV0//Z7Xxrd37Rl1+j+9tueGt1/5I3To/suAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBEDawtLhy0cf+Ovj30f3N1769Oj+seXR+VUnlmf/N7j1m/tH95dvPDe6//xv20b3XQDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmAtMWHtjw6+sDu3f+M7v9x+Mzo/t9rnhzd/+m+q0b3X1z78uj+/h8+H91fObl9dN8FIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEhbPHn4/OgDC0t7Rvf37vpgdP/82XdH98+sOz66f8niidH9lcsujO5v3XvR6L4LQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZC2uOvn60Yf2HPkidH9W5ZmG96x/s/R/TUPfD26f+DOK0b37978zOj+XZu2je67AKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBp/wUAAP//qpZcY30c7KAAAAAASUVORK5CYII=",
-        unreadCount: 50,
-        lastMessageAt: new Date(Date.now() - 2400000).toISOString(),
-        lastMessage:
-          "this is a long message, where the sentence is very redundant and long because it is long",
-      },
-    ],
+    selected: mockLocations[0].name,
+    locations: mockLocations,
+    messagesArray: getMessagesFor(mockLocations[0].name),
+    onSelect: action("onSelect"),
+  },
+};
+
+export const Augusta: Story = {
+  args: {
+    selected: mockLocations[1].name,
+    locations: mockLocations,
+    messagesArray: getMessagesFor(mockLocations[1].name),
+    onSelect: action("onSelect"),
+  },
+};
+
+export const PebbleBeach: Story = {
+  args: {
+    selected: mockLocations[2].name,
+    locations: mockLocations,
+    messagesArray: getMessagesFor(mockLocations[2].name),
+    onSelect: action("onSelect"),
   },
 };

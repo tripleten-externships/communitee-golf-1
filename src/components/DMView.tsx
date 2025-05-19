@@ -45,7 +45,7 @@ const DMView: React.FC<DMViewProps> = ({ message, onBack, onSend, thread }) => {
           />
         </button>
 
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center mb-[20px]">
           <img
             src={message.picture}
             alt={`${message.username}'s avatar`}
