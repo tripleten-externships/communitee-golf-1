@@ -14,13 +14,31 @@ const request = (url: string, options: RequestInit) => {
   };
 
 
-  export const getLocations = async (token: string) => {
-    const response = await request(`${baseUrl}/location`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // 🔑 Add token here
-      },
+  export const login = async (username: string, password: string) => {
+    const response = await request(`${baseUrl}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
     });
-    return response;
+  
+    if (response.token) {
+      return response.token;
+    }
+  
+    throw new Error(response.error || "Unknown login error");
   };
+
+  export const getLocations = async (token: string) => {
+    const response = await request (`${baseUrl}/location`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, 
+        },
+    });
+    if (!response.ok) {
+        throw new Error("Authentication token required");
+      }
+
+      return await response.json();
+}

@@ -5,26 +5,29 @@ import { Dropdown } from "./Dropdown";
 import { useState, useEffect } from "react";
 import Menu from "./Menu";
 import { getLocations } from "./utils/api";
+import { useAuth } from "../contexts/useAuth";
+// import { AUTH_TOKEN_KEY } from "./LoginForm";
 
 export const App: React.FC = () => {
+  const { isAuthenticated, logout, token } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
   const [course, setCourse] = useState<string[]>([]);
+  const [locations, setLocations] = useState<{id: string; name: string}[]>([]);
 
   useEffect(() => {
-    const loadLocations = async () => {
-      try {
-        const token = "test"; // or use chrome.storage/localStorage if available
-        const res = await getLocations(token);
-        const locationNames = res.map((loc: { name: string }) => loc.name);
-        setCourse(locationNames);
-      } catch (err) {
-        console.error("Failed to load locations", err);
-      }
-    };
-  
-    loadLocations();
-  }, []);
+    console.log("Token is:", token);
+    if (!token) return;
+    
+    getLocations(token)
+      .then((data) => {
+        setLocations(data);
+        setCourse(data.map((location: { name: any }) => location.name));
+        if (!selected && data.length) setSelected(data[0].name);
+      })
+      .catch((err) => console.error("Cannot fetch locations:", err));
+  }, [token]);
+
   // forgot password function
   const handleForgot = () => {
     // example code
