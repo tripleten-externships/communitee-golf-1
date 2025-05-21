@@ -8,7 +8,7 @@ export interface Message {
   clientName: string;
   clientImage: string;
   unreadCount: number;
-  lastMessageAt: string;
+  lastMessageAt: number;
   lastMessage: string;
   locationId: string;
 }

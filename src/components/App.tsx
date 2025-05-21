@@ -70,22 +70,7 @@ export const App: React.FC = () => {
     setLocations([]);
   };
 
-  // const handleSelect = async (m: MenuMessage) => {
-  //   const streamId = m.id;
-
-  //   setActiveDm({
-  //     messageid: m.id,
-  //     username: m.clientName,
-  //     picture: m.clientImage,
-  //     text: m.lastMessage,
-  //     timestamp: new Date(m.lastMessageAt).getTime(),
-  //   });
-  //   const full = await getSingleMessageStream(token!, streamId);
-  //   setThread(full.messages);
-  // };
-
   // dev mode handleSelect function to retain sent messages for testing and development using localstorage
-  // handle select function above this one is for production
   const handleSelect = async (m: MenuMessage) => {
     const streamId = m.id;
 
@@ -105,8 +90,6 @@ export const App: React.FC = () => {
       timestamp: new Date(m.lastMessageAt).getTime(),
     });
   };
-
-  // const course = ["Golf Course one", "Golf Course two", "Golf Course three"];
 
   return (
     // main styling for chrome extension

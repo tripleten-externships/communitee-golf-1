@@ -5,7 +5,7 @@ interface MessagePreviewProps {
     clientName: string;
     clientImage: string;
     unreadCount: number;
-    lastMessageAt: string;
+    lastMessageAt: number;
     lastMessage: string;
   };
 }
