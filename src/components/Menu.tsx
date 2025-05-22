@@ -1,6 +1,3 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../contexts/useAuth";
-import { getMessageStreams } from "./utils/api";
 import MessagePreview from "./MessagePreview";
 
 export interface Message {
@@ -19,51 +16,19 @@ export interface Location {
 }
 
 export interface MenuProps {
-  selected: string | null;
-  locations: Location[];
+  selected?: string;
   messagesArray?: Message[];
   onSelect: (message: Message) => void;
 }
 
-const Menu: React.FC<MenuProps> = ({
-  selected,
-  locations,
-  messagesArray,
-  onSelect,
-}) => {
-  const { token } = useAuth();
-  const [locationId, setLocationId] = useState<string>("0");
-  const [messagesData, setMessagesData] = useState<Message[]>(
-    messagesArray ?? []
-  );
-  const shouldFetch = messagesArray === undefined;
-
-  useEffect(() => {
-    if (messagesArray !== undefined) {
-      setMessagesData(messagesArray);
-    }
-  }, [messagesArray]);
-
-  useEffect(() => {
-    if (!shouldFetch || !selected) return;
-    const found = locations.find((location) => location.name === selected);
-    setLocationId(found ? found.id : "");
-  }, [selected, locations, shouldFetch]);
-
-  useEffect(() => {
-    if (!token || !shouldFetch || !locationId) return;
-    getMessageStreams(token, locationId)
-      .then((data) => setMessagesData(data))
-      .catch((err) => console.error("Cannot fetch message streams:", err));
-  }, [token, shouldFetch, locationId]);
-
+const Menu: React.FC<MenuProps> = ({ messagesArray, onSelect }) => {
   return (
     <div>
       <p className="font-poppins font-medium text-center text-base w-[152px] text-black border-b-2 border-b-black mt-[30px] mx-auto py-[10px]">
-        Messages ({messagesData.length})
+        Messages {messagesArray?.length ? `(${messagesArray.length})` : "(0)"}
       </p>
       <ul className="flex flex-col justify-center items-center mt-[16px] gap-[12px]">
-        {messagesData.map((message) => (
+       { messagesArray?.map((message) => (
           <li
             key={`${message.clientName}-${message.locationId}`}
             onClick={() => onSelect(message)}
@@ -78,7 +43,8 @@ const Menu: React.FC<MenuProps> = ({
               }}
             />
           </li>
-        ))}
+          ))
+        }
       </ul>
     </div>
   );
