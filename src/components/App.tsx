@@ -20,11 +20,8 @@ export const App: React.FC = () => {
   const { isAuthenticated, logout, token } = useAuth();
   const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
-  const [locations, setLocations] = useState<{ id: string; name: string }[]>(
-    []
-  );
+  const [locations, setLocations] = useState<{ id: string; name: string }[]>([]);
   const [locationId, setLocationId] = useState<string>("");
-  const [courses, setCourses] = useState<string[]>([]);
   const [messagesData, setMessagesData] = useState<MenuMessage[]>([]);
   const [activeDm, setActiveDm] = useState<DMMessage | null>(null);
   const [thread, setThread] = useState<
@@ -42,8 +39,6 @@ export const App: React.FC = () => {
     getLocations(token)
       .then((data) => {
         setLocations(data);
-        setCourses(data.map((location: { name: any }) => location.name));
-        if (!selected && data.length) setSelected(data[0].name);
       })
       .catch((err) => console.error("Cannot fetch locations:", err));
   }, [token]);
@@ -51,11 +46,11 @@ export const App: React.FC = () => {
   // whenever the user picks a different course, update locationId
   useEffect(() => {
     if (!selected) return;
-    const match = locations.find((loc) => loc.name === selected);
+    const match = locations.find((location) => location.name === selected);
     setLocationId(match ? match.id : "");
   }, [selected, locations]);
 
-  // fetch message‐streams for the current location
+  // fetch messageStreams for the current location
   useEffect(() => {
     if (!token || !locationId) return;
     getMessageStreams(token, locationId)
@@ -69,7 +64,6 @@ export const App: React.FC = () => {
     setCurrentView("login");
     setLocations([]);
   };
-
   // dev mode handleSelect function to retain sent messages for testing and development using localstorage
   const handleSelect = async (m: MenuMessage) => {
     const streamId = m.id;
@@ -118,7 +112,7 @@ export const App: React.FC = () => {
               </div>
               <Dropdown
                 buttonText={selected ?? "Select Location"}
-                items={courses}
+                items={locations}
                 onSelect={(item) => setSelected(item)}
               />
             </>
@@ -133,10 +127,6 @@ export const App: React.FC = () => {
                 // send to backend
                 await apiSend(token!, activeDm!.messageid, content);
 
-                // dev mode testing sent messages
-                // TODO: in production remove this block and re-fetch the full thread:
-                // const full = await getSingleMessageStream(token!, activeDm!.messageid);
-                // setThread(full.messages);
                 setThread((prev) => {
                   const newMsg = {
                     id: `local-${Date.now()}`,
@@ -157,8 +147,6 @@ export const App: React.FC = () => {
             />
           ) : (
             <Menu
-              locations={locations}
-              selected={selected}
               messagesArray={messagesData}
               onSelect={handleSelect}
             />
