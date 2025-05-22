@@ -63,7 +63,6 @@ export const App: React.FC = () => {
     logout();
     setCurrentView("login");
     setLocations([]);
-    setMessagesData([]);
   };
   // dev mode handleSelect function to retain sent messages for testing and development using localstorage
   const handleSelect = async (m: MenuMessage) => {
