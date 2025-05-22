@@ -16,7 +16,6 @@ export interface Location {
 }
 
 export interface MenuProps {
-  selected?: string;
   messagesArray?: Message[];
   onSelect: (message: Message) => void;
 }
