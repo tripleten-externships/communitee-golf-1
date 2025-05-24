@@ -17,10 +17,12 @@ import Menu, { Message as MenuMessage } from "./Menu";
 import { useAuth } from "../contexts/useAuth.ts";
 
 export const App: React.FC = () => {
-  const { isAuthenticated, logout, token } = useAuth();
+  const { isAuthenticated, logout, token, user } = useAuth();
   const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
-  const [locations, setLocations] = useState<{ id: string; name: string }[]>([]);
+  const [locations, setLocations] = useState<{ id: string; name: string }[]>(
+    []
+  );
   const [locationId, setLocationId] = useState<string>("");
   const [messagesData, setMessagesData] = useState<MenuMessage[]>([]);
   const [activeDm, setActiveDm] = useState<DMMessage | null>(null);
@@ -64,17 +66,11 @@ export const App: React.FC = () => {
     setCurrentView("login");
     setLocations([]);
   };
-  // dev mode handleSelect function to retain sent messages for testing and development using localstorage
-  const handleSelect = async (m: MenuMessage) => {
-    const streamId = m.id;
 
-    const saved = localStorage.getItem(streamId);
-    if (saved) {
-      setThread(JSON.parse(saved));
-    } else {
-      const full = await getSingleMessageStream(token!, streamId);
-      setThread(full.messages);
-    }
+  // messaging system
+  const handleSelect = async (m: MenuMessage) => {
+    const full = await getSingleMessageStream(token!, m.id);
+    setThread(full.messages);
 
     setActiveDm({
       messageid: m.id,
@@ -95,10 +91,7 @@ export const App: React.FC = () => {
       />
       {!isAuthenticated ? (
         currentView === "login" ? (
-          <LoginForm
-            onLogin={() => {}}
-            onForgotPassword={() => setCurrentView("forgot")}
-          />
+          <LoginForm onForgotPassword={() => setCurrentView("forgot")} />
         ) : (
           <ForgotPasswordForm onBackToLogin={() => setCurrentView("login")} />
         )
@@ -118,38 +111,25 @@ export const App: React.FC = () => {
             </>
           )}
 
-          {activeDm ? (
+          {activeDm && user ? (
             <DMView
+              currentUserId={user!.id}
               message={activeDm}
               thread={thread}
               onBack={() => setActiveDm(null)}
-              onSend={async (content: string) => {
-                // send to backend
-                await apiSend(token!, activeDm!.messageid, content);
-
-                setThread((prev) => {
-                  const newMsg = {
-                    id: `local-${Date.now()}`,
-                    content,
-                    sentAt: new Date().toISOString(),
-                    senderId: "manager",
-                  };
-
-                  // storing sent messages in localstorage for dev mode and testing
-                  const newThread = [...prev, newMsg];
-                  localStorage.setItem(
-                    activeDm!.messageid,
-                    JSON.stringify(newThread)
-                  );
-                  return newThread;
-                });
+              onSend={async (content) => {
+                await apiSend(token!, activeDm.messageid, content);
+                const newList = await getMessageStreams(token!, locationId);
+                setMessagesData(newList);
+                const full = await getSingleMessageStream(
+                  token!,
+                  activeDm.messageid
+                );
+                setThread(full.messages);
               }}
             />
           ) : (
-            <Menu
-              messagesArray={messagesData}
-              onSelect={handleSelect}
-            />
+            <Menu messagesArray={messagesData} onSelect={handleSelect} />
           )}
         </>
       )}

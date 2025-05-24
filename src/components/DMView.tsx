@@ -18,13 +18,20 @@ export interface Message {
 }
 
 interface DMViewProps {
+  currentUserId: string;
   thread: ThreadMsg[];
   message: Message;
   onBack: () => void;
   onSend: (content: string) => Promise<void>;
 }
 
-const DMView: React.FC<DMViewProps> = ({ message, onBack, onSend, thread }) => {
+const DMView: React.FC<DMViewProps> = ({
+  message,
+  onBack,
+  onSend,
+  thread,
+  currentUserId,
+}) => {
   const [draft, setDraft] = useState("");
 
   const handleSend = async () => {
@@ -61,7 +68,7 @@ const DMView: React.FC<DMViewProps> = ({ message, onBack, onSend, thread }) => {
       {/* Chat history */}
       <div className="flex-1 overflow-y-auto">
         {thread.map((msg) => {
-          const isOutbound = msg.senderId === "manager";
+          const isOutbound = msg.senderId === currentUserId;
           const timestamp = new Date(msg.sentAt).getTime();
 
           return (
