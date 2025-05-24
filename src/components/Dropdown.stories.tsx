@@ -1,27 +1,36 @@
 import { Dropdown } from "./Dropdown";
+interface Item {
+  id: string;
+  name: string;
+}
 
 interface DropdownArgs {
   buttonText: string;
-  items: string[];
+  items: Item[];
+  onSelect: (item: string) => void;
 }
 
 export default {
   title: "Components/Dropdown",
   component: Dropdown,
   args: {
-    buttonText: "Selected option",
-    items: ["Golf Course one", "Golf Course two", "Golf Course three"],
-    onSelect: (item: string) => console.log("Selected:", item),
+    buttonText: "Select Location",
+    items: [
+      { id: "1", name: "Golf Course one" },
+      { id: "2", name: "Golf Course two" },
+      { id: "3", name: "Golf Course three" },
+    ],
+    onSelect: (item: Item) => console.log("Selected:", item),
   },
 };
 
 const Template = (args: DropdownArgs) => {
-  const { buttonText, items } = args;
+  const { buttonText, items, onSelect } = args;
   return (
     <Dropdown
       buttonText={buttonText}
       items={items}
-      onSelect={(item: string) => console.log("Selected:", item)}
+      onSelect={onSelect}
     />
   );
 };
