@@ -68,12 +68,6 @@ const DMView: React.FC<DMViewProps> = ({
       {/* Chat history */}
       <div className="flex-1 overflow-y-auto">
         {thread.map((msg) => {
-          console.log(
-            "senderId:",
-            msg.senderId,
-            "currentUserId:",
-            currentUserId
-          );
           const isOutbound = msg.senderId === currentUserId;
           const timestamp = new Date(msg.sentAt).getTime();
 
