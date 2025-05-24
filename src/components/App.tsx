@@ -138,8 +138,8 @@ export const App: React.FC = () => {
                     message={activeDm}
                     thread={thread}
                     onBack={() => {
-                      setActiveDm(null);
-                      {navigate("/options")};
+                      setActiveDm(null)
+                      {navigate("/options")}
                     }}
                     onSend={async (content: string) => {
                       // send to backend
