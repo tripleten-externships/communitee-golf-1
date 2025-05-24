@@ -85,7 +85,7 @@ export const App: React.FC = () => {
       text: m.lastMessage,
       timestamp: new Date(m.lastMessageAt).getTime(),
     });
-    {navigate("/dm")}
+    navigate("/dm")
   };
 
   return (
@@ -139,7 +139,7 @@ export const App: React.FC = () => {
                     thread={thread}
                     onBack={() => {
                       setActiveDm(null)
-                      {navigate("/options")}
+                      navigate("/options")
                     }}
                     onSend={async (content: string) => {
                       // send to backend
