@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import {
   getMessageStreams,
@@ -16,9 +17,10 @@ import Menu, { Message as MenuMessage } from "./Menu";
 
 import { useAuth } from "../contexts/useAuth.ts";
 
+import { ProtectedRoute } from "./ProtectedRoute.tsx";
+
 export const App: React.FC = () => {
   const { isAuthenticated, logout, token } = useAuth();
-  const [currentView, setCurrentView] = useState<"login" | "forgot">("login");
   const [selected, setSelected] = useState<string | null>(null);
   const [locations, setLocations] = useState<{ id: string; name: string }[]>([]);
   const [locationId, setLocationId] = useState<string>("");
@@ -32,6 +34,7 @@ export const App: React.FC = () => {
       senderId: string;
     }[]
   >([]);
+  const navigate = useNavigate();
 
   // get locations for the course
   useEffect(() => {
@@ -61,7 +64,6 @@ export const App: React.FC = () => {
   // logout function
   const handleLogout = () => {
     logout();
-    setCurrentView("login");
     setLocations([]);
   };
   // dev mode handleSelect function to retain sent messages for testing and development using localstorage
@@ -83,6 +85,7 @@ export const App: React.FC = () => {
       text: m.lastMessage,
       timestamp: new Date(m.lastMessageAt).getTime(),
     });
+    navigate("/dm")
   };
 
   return (
@@ -93,66 +96,88 @@ export const App: React.FC = () => {
         onLogout={handleLogout}
         isLoggedIn={isAuthenticated}
       />
-      {!isAuthenticated ? (
-        currentView === "login" ? (
-          <LoginForm
-            onLogin={() => {}}
-            onForgotPassword={() => setCurrentView("forgot")}
+        <Routes>
+          <Route 
+            path="/"
+            element={
+                <LoginForm
+                onLogin={() => {navigate("/options")}}
+                onForgotPassword={() => {navigate("/forgot-password")}}
+                />
+            }
           />
-        ) : (
-          <ForgotPasswordForm onBackToLogin={() => setCurrentView("login")} />
-        )
-      ) : (
-        <>
-          {/* shows Location and Dropdown when NOT in a DM view */}
-          {!activeDm && (
-            <>
-              <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
-                Location
-              </div>
-              <Dropdown
-                buttonText={selected ?? "Select Location"}
-                items={locations}
-                onSelect={(item) => setSelected(item)}
-              />
-            </>
-          )}
+          <Route 
+            path="/options"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">Location</div>
+                <Dropdown
+                  buttonText={selected ?? "Select Location"}
+                  items={locations}
+                  onSelect={(item) => setSelected(item)}
+                />
+                <Menu
+                  messagesArray={messagesData}
+                  onSelect={handleSelect}
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <ForgotPasswordForm onBackToLogin={() => {navigate("/")}} />
+            }
+          />
+          <Route 
+            path="/dm"
+            element={
+              activeDm ? (
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <DMView
+                    message={activeDm}
+                    thread={thread}
+                    onBack={() => {
+                      setActiveDm(null)
+                      navigate("/options")
+                    }}
+                    onSend={async (content: string) => {
+                      // send to backend
+                      await apiSend(token!, activeDm!.messageid, content);
 
-          {activeDm ? (
-            <DMView
-              message={activeDm}
-              thread={thread}
-              onBack={() => setActiveDm(null)}
-              onSend={async (content: string) => {
-                // send to backend
-                await apiSend(token!, activeDm!.messageid, content);
+                      setThread((prev) => {
+                        const newMsg = {
+                          id: `local-${Date.now()}`,
+                          content,
+                          sentAt: new Date().toISOString(),
+                          senderId: "manager",
+                        };
 
-                setThread((prev) => {
-                  const newMsg = {
-                    id: `local-${Date.now()}`,
-                    content,
-                    sentAt: new Date().toISOString(),
-                    senderId: "manager",
-                  };
-
-                  // storing sent messages in localstorage for dev mode and testing
-                  const newThread = [...prev, newMsg];
-                  localStorage.setItem(
-                    activeDm!.messageid,
-                    JSON.stringify(newThread)
-                  );
-                  return newThread;
-                });
-              }}
-            />
-          ) : (
-            <Menu
-              messagesArray={messagesData}
-              onSelect={handleSelect}
-            />
-          )}
-        </>
-      )}
+                        // storing sent messages in localstorage for dev mode and testing
+                        const newThread = [...prev, newMsg];
+                        localStorage.setItem(
+                          activeDm!.messageid,
+                          JSON.stringify(newThread)
+                        );
+                        return newThread;
+                      });
+                    }}
+                  />
+                </ProtectedRoute>
+              ) : (<Navigate to="/options" replace />)
+            }
+          />
+          <Route
+            path="*"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/options" replace />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
+          />
+        </Routes>
     </div>
   );
 };
