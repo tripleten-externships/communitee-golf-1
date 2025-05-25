@@ -14,6 +14,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     // DMView only needs id, username and picture for the header
+    currentUserId: "manager",
     message: {
       messageid: "1",
       username: "Manager",

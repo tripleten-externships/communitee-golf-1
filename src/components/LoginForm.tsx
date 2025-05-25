@@ -2,15 +2,11 @@ import React, { useState } from "react";
 import { useAuth } from "../contexts/useAuth";
 
 export interface LoginFormProps {
-  onLogin: () => void;
   onClose?: () => void;
   onForgotPassword?: () => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({
-  onLogin,
-  onForgotPassword,
-}) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
@@ -34,7 +30,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
     try {
       await login(username, password);
-      onLogin();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       setError(message || "An unexpected error occurred");

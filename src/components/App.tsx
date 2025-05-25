@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import {
   getMessageStreams,
@@ -20,9 +20,11 @@ import { useAuth } from "../contexts/useAuth.ts";
 import { ProtectedRoute } from "./ProtectedRoute.tsx";
 
 export const App: React.FC = () => {
-  const { isAuthenticated, logout, token } = useAuth();
+  const { isAuthenticated, logout, token, user } = useAuth();
   const [selected, setSelected] = useState<string | null>(null);
-  const [locations, setLocations] = useState<{ id: string; name: string }[]>([]);
+  const [locations, setLocations] = useState<{ id: string; name: string }[]>(
+    []
+  );
   const [locationId, setLocationId] = useState<string>("");
   const [messagesData, setMessagesData] = useState<MenuMessage[]>([]);
   const [activeDm, setActiveDm] = useState<DMMessage | null>(null);
@@ -61,22 +63,30 @@ export const App: React.FC = () => {
       .catch((err) => console.error("Cannot fetch message streams:", err));
   }, [token, locationId]);
 
+  // redirect to the options screen when auth state becomes true
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/options");
+    }
+  }, [isAuthenticated, navigate]);
+
+  // navigate into the DM view once a conversation is selected
+  useEffect(() => {
+    if (activeDm) {
+      navigate("/dm");
+    }
+  }, [activeDm, navigate]);
+
   // logout function
   const handleLogout = () => {
     logout();
     setLocations([]);
   };
-  // dev mode handleSelect function to retain sent messages for testing and development using localstorage
-  const handleSelect = async (m: MenuMessage) => {
-    const streamId = m.id;
 
-    const saved = localStorage.getItem(streamId);
-    if (saved) {
-      setThread(JSON.parse(saved));
-    } else {
-      const full = await getSingleMessageStream(token!, streamId);
-      setThread(full.messages);
-    }
+  // messaging system
+  const handleSelect = async (m: MenuMessage) => {
+    const full = await getSingleMessageStream(token!, m.id);
+    setThread(full.messages);
 
     setActiveDm({
       messageid: m.id,
@@ -85,7 +95,6 @@ export const App: React.FC = () => {
       text: m.lastMessage,
       timestamp: new Date(m.lastMessageAt).getTime(),
     });
-    navigate("/dm")
   };
 
   return (
@@ -96,88 +105,82 @@ export const App: React.FC = () => {
         onLogout={handleLogout}
         isLoggedIn={isAuthenticated}
       />
-        <Routes>
-          <Route 
-            path="/"
-            element={
-                <LoginForm
-                onLogin={() => {navigate("/options")}}
-                onForgotPassword={() => {navigate("/forgot-password")}}
-                />
-            }
-          />
-          <Route 
-            path="/options"
-            element={
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <LoginForm
+              onForgotPassword={() => {
+                navigate("/forgot-password");
+              }}
+            />
+          }
+        />
+        <Route
+          path="/options"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">
+                Location
+              </div>
+              <Dropdown
+                buttonText={selected ?? "Select Location"}
+                items={locations}
+                onSelect={(item) => setSelected(item)}
+              />
+              <Menu messagesArray={messagesData} onSelect={handleSelect} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <ForgotPasswordForm
+              onBackToLogin={() => {
+                navigate("/");
+              }}
+            />
+          }
+        />
+        <Route
+          path="/dm"
+          element={
+            activeDm && user ? (
               <ProtectedRoute isAuthenticated={isAuthenticated}>
-                <div className="mb-1 text-[12px] font-normal text-grayBorder leading-[110%]">Location</div>
-                <Dropdown
-                  buttonText={selected ?? "Select Location"}
-                  items={locations}
-                  onSelect={(item) => setSelected(item)}
-                />
-                <Menu
-                  messagesArray={messagesData}
-                  onSelect={handleSelect}
+                <DMView
+                  currentUserId={user!.id}
+                  message={activeDm}
+                  thread={thread}
+                  onBack={() => setActiveDm(null)}
+                  onSend={async (content) => {
+                    await apiSend(token!, activeDm.messageid, content);
+                    const newList = await getMessageStreams(token!, locationId);
+                    setMessagesData(newList);
+                    const full = await getSingleMessageStream(
+                      token!,
+                      activeDm.messageid
+                    );
+                    setThread(full.messages);
+                  }}
                 />
               </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/forgot-password"
-            element={
-              <ForgotPasswordForm onBackToLogin={() => {navigate("/")}} />
-            }
-          />
-          <Route 
-            path="/dm"
-            element={
-              activeDm ? (
-                <ProtectedRoute isAuthenticated={isAuthenticated}>
-                  <DMView
-                    message={activeDm}
-                    thread={thread}
-                    onBack={() => {
-                      setActiveDm(null)
-                      navigate("/options")
-                    }}
-                    onSend={async (content: string) => {
-                      // send to backend
-                      await apiSend(token!, activeDm!.messageid, content);
-
-                      setThread((prev) => {
-                        const newMsg = {
-                          id: `local-${Date.now()}`,
-                          content,
-                          sentAt: new Date().toISOString(),
-                          senderId: "manager",
-                        };
-
-                        // storing sent messages in localstorage for dev mode and testing
-                        const newThread = [...prev, newMsg];
-                        localStorage.setItem(
-                          activeDm!.messageid,
-                          JSON.stringify(newThread)
-                        );
-                        return newThread;
-                      });
-                    }}
-                  />
-                </ProtectedRoute>
-              ) : (<Navigate to="/options" replace />)
-            }
-          />
-          <Route
-            path="*"
-            element={
-              isAuthenticated ? (
-                <Navigate to="/options" replace />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
-          />
-        </Routes>
+            ) : (
+              <Navigate to="/options" replace />
+            )
+          }
+        />
+        <Route
+          path="*"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/options" replace />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+      </Routes>
     </div>
   );
 };
