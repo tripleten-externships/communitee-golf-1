@@ -185,9 +185,7 @@ const DMView: React.FC<DMViewProps> = ({
               max-h-[150px]
             "
           />
-          <div className="text-right text-xs text-gray-500 mt-1">
-            {draft.length}/300
-          </div>
+
           <button
             onClick={handleSend}
             className="absolute right-3 top-1/2 -translate-y-1/2"
@@ -198,6 +196,9 @@ const DMView: React.FC<DMViewProps> = ({
               className="w-5 h-5 object-contain"
             />
           </button>
+        </div>
+        <div className="text-right text-xs text-gray-500">
+          {draft.length}/500
         </div>
       </div>
     </div>
