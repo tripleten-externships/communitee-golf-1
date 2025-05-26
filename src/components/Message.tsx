@@ -41,7 +41,6 @@ const Message: React.FC<MessageProps> = ({ message, isSent }) => {
       style={{
         display: "flex",
         width: "100%",
-        marginBottom: "10px",
       }}
     >
       <div style={styles}>{message}</div>

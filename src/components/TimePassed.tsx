@@ -1,15 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 interface TimePassedProps {
   timestamp: number;
 }
 
 const TimePassed: React.FC<TimePassedProps> = ({ timestamp }) => {
-  const timeNow = Date.now();
+  const [timeNow, setTimeNow] = useState(Date.now());
   const seconds = Math.floor((timeNow - timestamp) / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
+
+  useEffect(() => {
+    // ticks every minute
+    const interval = setInterval(() => {
+      setTimeNow(Date.now());
+    }, 60_000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const isYesterday = () => {
     // to check if the timestamp was yesterday
