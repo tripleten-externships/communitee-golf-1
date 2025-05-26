@@ -173,6 +173,7 @@ const DMView: React.FC<DMViewProps> = ({
             onKeyDown={handleKeyDown}
             placeholder="Write a message…"
             rows={1}
+            maxLength={300}
             className="
               w-full px-4 py-2 pr-10 
               border rounded-lg 
@@ -184,6 +185,9 @@ const DMView: React.FC<DMViewProps> = ({
               max-h-[150px]
             "
           />
+          <div className="text-right text-xs text-gray-500 mt-1">
+            {draft.length}/300
+          </div>
           <button
             onClick={handleSend}
             className="absolute right-3 top-1/2 -translate-y-1/2"
