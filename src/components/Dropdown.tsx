@@ -3,20 +3,20 @@ import {DropdownButton} from "./DropdownButton";
 import {DropdownContent} from "./DropdownContent";
 import { useState, useEffect, useRef } from "react";
 
-interface Item {
+export interface Item {
   id: string;
-  name: string;
+  title: string;
 }
 // items is an array of objects
 interface DropdownProps {
   buttonText: string;
-  onSelect?: (item: string) => void;
+  onSelect?: (item: Item) => void;
   items: Item[];
 }
 
   export const Dropdown: React.FC<DropdownProps> = ({buttonText, onSelect, items}: DropdownProps) => {
     const [open, setOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState<string>(buttonText || items[0].name);
+    const [selectedItem, setSelectedItem] = useState<string>(buttonText || items[0].title);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -38,8 +38,8 @@ interface DropdownProps {
         };
     }, []);
 
-    const handleSelect = (item: string) => {
-        setSelectedItem(item);
+    const handleSelect = (item: Item) => {
+        setSelectedItem(item.title);
         onSelect?.(item);
         setOpen(false);
       };
@@ -51,9 +51,9 @@ interface DropdownProps {
               <ul> {items.map((item) => ( <li key={item.id}>
                 <button
                   className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                  onClick={() => handleSelect(item.name)}
+                  onClick={() => handleSelect(item)}
                 >
-                  {item.name}
+                  {item.title}
                 </button>
                 </li>
                 ))}

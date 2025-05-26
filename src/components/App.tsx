@@ -14,6 +14,7 @@ import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { Dropdown } from "./Dropdown";
 import DMView, { Message as DMMessage } from "./DMView";
 import Menu, { Message as MenuMessage } from "./Menu";
+import type {Item} from "./Dropdown.tsx";
 
 import { useAuth } from "../contexts/useAuth.ts";
 
@@ -126,8 +127,8 @@ export const App: React.FC = () => {
               </div>
               <Dropdown
                 buttonText={selectedLocationName ?? "Select Location"}
-                items={locations}
-                onSelect={(item) => setSelectedLocationName(item)}
+                items={locations.map(loc => ({ id: loc.id, title: loc.name }))}
+                onSelect={(item: Item) => setSelectedLocationName(item.title)}
               />
               <Menu messagesArray={messagesData} onSelect={handleSelect} />
             </ProtectedRoute>
