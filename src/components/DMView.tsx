@@ -198,7 +198,7 @@ const DMView: React.FC<DMViewProps> = ({
           </button>
         </div>
         <div className="text-right text-xs text-gray-500">
-          {draft.length}/500
+          {draft.length}/300
         </div>
       </div>
     </div>
