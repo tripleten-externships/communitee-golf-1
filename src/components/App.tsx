@@ -38,6 +38,32 @@ export const App: React.FC = () => {
   >([]);
   const navigate = useNavigate();
 
+  // when notification is clicked, load that stream, set it as active, and navigate into the DM view.
+  useEffect(() => {
+    const hash = window.location.hash;
+    const [path, query] = hash.split("?");
+    if (path === "#/dm" && query) {
+      const params = new URLSearchParams(query);
+      const streamId = params.get("streamId");
+      if (streamId && token) {
+        // fetch the thread, then navigate into /dm
+        getSingleMessageStream(token, streamId)
+          .then((full) => {
+            setThread(full.messages);
+            setActiveDm({
+              messageid: streamId,
+              username: full.clientName,
+              picture: full.clientImage,
+              text: full.lastMessage,
+              timestamp: new Date(full.lastMessageAt).getTime(),
+            });
+            navigate("/dm");
+          })
+          .catch(console.error);
+      }
+    }
+  }, [token, navigate]);
+
   // get locations for the course
   useEffect(() => {
     if (!token) return;
@@ -51,8 +77,16 @@ export const App: React.FC = () => {
   // whenever the user picks a different course, update locationId
   useEffect(() => {
     if (!selected) return;
-    const match = locations.find((location) => location.name === selected);
-    setLocationId(match ? match.id : "");
+    const match = locations.find((loc) => loc.name === selected);
+    const id = match ? match.id : "";
+    setLocationId(id);
+
+    if (window.chrome?.storage?.local) {
+      chrome.storage.local.set({ locationId: id });
+    } else {
+      // dev‐mode fallback
+      window.localStorage.setItem("locationId", id);
+    }
   }, [selected, locations]);
 
   // fetch messageStreams for the current location

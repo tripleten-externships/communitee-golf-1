@@ -2,22 +2,22 @@ import { getMessageStreams } from "./src/components/utils/api.js"
 
 // remember the last timestamp for each stream
 const lastSeen: Record<string, number> = {};
-const POLL_INTERVAL = 30_000; // 30 seconds
 
-// helper to pull stored token out of chrome.storage
-async function getStoredToken(): Promise<string | null> {
+async function getStoredData(): Promise<{ token: string|null; locationId: string|null }> {
   return new Promise((resolve) => {
-    chrome.storage.local.get(["token"], (res) => resolve(res.token ?? null));
+    chrome.storage.local.get(["token","locationId"], (res) =>
+      resolve({ token: res.token ?? null, locationId: res.locationId ?? null })
+    );
   });
 }
 
 // polling function
 async function checkForNewMessages() {
-  const token = await getStoredToken();
-  if (!token) return;  // not logged in yet
+  const { token, locationId } = await getStoredData();
+  if (!token || !locationId) return; 
 
   // fetch streams for whatever location
-  const streams = await getMessageStreams(token, /* yourLocationId */);
+  const streams = await getMessageStreams(token, locationId);
   streams.forEach((stream) => {
     const ts = new Date(stream.lastMessageAt).getTime();
     const prev = lastSeen[stream.id] || 0;
@@ -37,16 +37,26 @@ async function checkForNewMessages() {
   });
 }
 
-// when extension first installs or updates, start polling
+
 chrome.runtime.onInstalled.addListener(() => {
-  checkForNewMessages();
-  setInterval(checkForNewMessages, POLL_INTERVAL);
+  chrome.alarms.create("pollMessages", { periodInMinutes: 0.5 });
+});
+chrome.alarms.onAlarm.addListener(alarm => {
+  if (alarm.name === "pollMessages") checkForNewMessages();
 });
 
 // if the user clicks the notification, open popup and tell which stream to show
 chrome.notifications.onClicked.addListener((streamId) => {
-  chrome.action.openPopup();
-  chrome.runtime.sendMessage({ openStream: streamId });
+  //  construct a URL for popup page, including the stream ID
+  const url = chrome.runtime.getURL(`index.html#/dm?streamId=${streamId}`);
+  
+  // open it in a new popup-style window:
+  chrome.windows.create({
+    url,
+    type:   "popup",
+    width:  336,   
+    height: 625,
+  });
 });
 
 // GUIDLINES FOR TESTING
@@ -55,6 +65,7 @@ chrome.notifications.onClicked.addListener((streamId) => {
 // run "npm run build" to create build to test notifications in google chrome.
 // open "chrome://extensions/" in browser, open "load unpacked" and select "dist" folder from communitee-golf-1
 // open "service worker" console, paste and run following test notification
+// when the notification is clicked it will open a pop-up style window since it seems like you can't trigger the extension itself to open due to google's security.
 
 // chrome.notifications.create("test", {
 //   type:    "basic",
