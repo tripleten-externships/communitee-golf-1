@@ -57,19 +57,12 @@ const TimePassed: React.FC<TimePassedProps> = ({ timestamp }) => {
     return `${month} ${day}`;
   };
 
-  if (seconds < 60) {
-    return <span>Just now</span>;
-  } else if (minutes < 60) {
-    return <span>{minutes}min</span>;
-  } else if (isYesterday()) {
-    return <span>Yesterday</span>;
-  } else if (hours < 24) {
-    return <span>{hours}h</span>;
-  } else if (days < 7) {
-    return <span>{days} days ago</span>;
-  } else {
-    return <span>{formatDate()}</span>;
-  }
+  if (seconds < 60) return <span>Just now</span>;
+  if (minutes < 60) return <span>{minutes}min</span>;
+  if (hours < 24) return <span>{hours}h</span>;
+  if (isYesterday()) return <span>Yesterday</span>;
+  if (days < 7) return <span>{days} days ago</span>;
+  return <span>{formatDate()}</span>;
 };
 
 export default TimePassed;

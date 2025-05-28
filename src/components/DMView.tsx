@@ -75,12 +75,25 @@ const DMView: React.FC<DMViewProps> = ({
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
+    const isYesterday = (d: Date, now: Date) => {
+      const dateMidnight = new Date(d);
+      const nowMidnight = new Date(now);
+
+      dateMidnight.setHours(0, 0, 0, 0);
+      nowMidnight.setHours(0, 0, 0, 0);
+
+      const diff = nowMidnight.getTime() - dateMidnight.getTime();
+      const oneDay = 1000 * 60 * 60 * 24;
+
+      return diff === oneDay;
+    };
+
     if (diff < 60000) return "Just now";
     if (minutes < 60) return `${minutes}min`;
     if (hours < 24) return `${hours}h`;
-    if (days === 1) return "Yesterday";
+    if (isYesterday(date, now)) return "Yesterday";
     if (days < 7) return `${days} days ago`;
-    return date.toDateString();
+    return date.toLocaleDateString();
   };
 
   const groupedMessages = () => {
