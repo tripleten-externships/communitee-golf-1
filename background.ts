@@ -76,4 +76,4 @@ chrome.notifications.onClicked.addListener((streamId) => {
 // }).then((id) => console.log("notification id:", id))
 //   .catch((err) => console.error("notify error:", err));
 
-// test notification should pop up
+// test notification should pop up or show up in notification center
