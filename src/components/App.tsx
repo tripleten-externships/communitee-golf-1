@@ -79,6 +79,7 @@ export const App: React.FC = () => {
 
   // logout function
   const handleLogout = () => {
+    setActiveDm(null);
     logout();
     setLocations([]);
   };

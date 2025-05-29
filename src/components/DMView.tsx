@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+  useRef,
+  useLayoutEffect,
+  useEffect,
+  KeyboardEvent,
+} from "react";
 import TimePassed from "./TimePassed";
 import MessageBubble from "./Message";
 
@@ -33,11 +39,91 @@ const DMView: React.FC<DMViewProps> = ({
   currentUserId,
 }) => {
   const [draft, setDraft] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const historyRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const textArea = textareaRef.current;
+    if (!textArea) return;
+    textArea.style.height = "auto";
+    textArea.style.height = textArea.scrollHeight + "px";
+  }, [draft]);
 
   const handleSend = async () => {
     if (!draft.trim()) return;
     await onSend(draft);
     setDraft("");
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  useEffect(() => {
+    const view = historyRef.current;
+    if (!view) return;
+    view.scrollTop = view.scrollHeight;
+  }, [thread]);
+
+  const getTimeGroupKey = (date: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    const isYesterday = (d: Date, now: Date) => {
+      const dateMidnight = new Date(d);
+      const nowMidnight = new Date(now);
+
+      dateMidnight.setHours(0, 0, 0, 0);
+      nowMidnight.setHours(0, 0, 0, 0);
+
+      const diff = nowMidnight.getTime() - dateMidnight.getTime();
+      const oneDay = 1000 * 60 * 60 * 24;
+
+      return diff === oneDay;
+    };
+
+    if (diff < 60000) return "Just now";
+    if (minutes < 60) return `${minutes}min`;
+    if (hours < 24) return `${hours}h`;
+    if (isYesterday(date, now)) return "Yesterday";
+    if (days < 7) return `${days} days ago`;
+    return date.toLocaleDateString();
+  };
+
+  const groupedMessages = () => {
+    const groups: {
+      key: string;
+      timestamp: number;
+      messages: ThreadMsg[];
+      isOutbound: boolean;
+    }[] = [];
+
+    for (const msg of thread) {
+      const date = new Date(msg.sentAt);
+      const key = getTimeGroupKey(date);
+      const timestamp = date.getTime();
+      const isOutbound = msg.senderId === currentUserId;
+      const last = groups[groups.length - 1];
+
+      if (last && last.key === key && last.isOutbound === isOutbound) {
+        last.messages.push(msg);
+      } else {
+        groups.push({
+          key,
+          timestamp,
+          messages: [msg],
+          isOutbound,
+        });
+      }
+    }
+
+    return groups;
   };
 
   return (
@@ -51,7 +137,6 @@ const DMView: React.FC<DMViewProps> = ({
             className="w-6 h-6 object-contain"
           />
         </button>
-
         <div className="flex flex-col items-center mb-[20px]">
           <img
             src={message.picture}
@@ -66,38 +151,54 @@ const DMView: React.FC<DMViewProps> = ({
       </div>
 
       {/* Chat history */}
-      <div className="flex-1 overflow-y-auto">
-        {thread.map((msg) => {
-          const isOutbound = msg.senderId === currentUserId;
-          const timestamp = new Date(msg.sentAt).getTime();
-
-          return (
-            <div
-              key={msg.id}
-              className={`mb-2 flex flex-col ${
-                isOutbound ? "items-end" : "items-start"
-              }`}
-            >
-              <p className="text-[10px] text-gray-500 mb-1">
-                <TimePassed timestamp={timestamp} />
-              </p>
-              <MessageBubble message={msg.content} isSent={isOutbound} />
-            </div>
-          );
-        })}
+      <div ref={historyRef} className="flex-1 overflow-y-auto">
+        {groupedMessages().map((group) => (
+          <div
+            key={group.timestamp + group.key}
+            className={`flex flex-col ${
+              group.isOutbound ? "items-end" : "items-start"
+            } mb-3`}
+          >
+            <p className="text-[10px] text-gray-500 mb-2px">
+              <TimePassed timestamp={group.timestamp} />
+            </p>
+            {group.messages.map((msg) => {
+              return (
+                <div key={msg.id} className="mb-1">
+                  <MessageBubble
+                    message={msg.content}
+                    isSent={group.isOutbound}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
 
       {/* Input */}
       <div className="mt-auto py-2 bg-white">
         <div className="relative">
-          <input
-            type="text"
+          <textarea
+            ref={textareaRef}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            onKeyDown={handleKeyDown}
             placeholder="Write a message…"
-            className="w-full px-4 py-1 pr-10 border rounded-lg focus:outline-none poppins font-regular text-base"
+            rows={1}
+            maxLength={500}
+            className="
+              w-full px-4 py-2 pr-10 
+              border rounded-lg 
+              resize-none 
+              focus:outline-none 
+              poppins font-regular
+              text-base
+              min-h-[42px]
+              max-h-[150px]
+            "
           />
+
           <button
             onClick={handleSend}
             className="absolute right-3 top-1/2 -translate-y-1/2"
@@ -108,6 +209,9 @@ const DMView: React.FC<DMViewProps> = ({
               className="w-5 h-5 object-contain"
             />
           </button>
+        </div>
+        <div className="text-right text-xs text-gray-500">
+          {draft.length}/500
         </div>
       </div>
     </div>
