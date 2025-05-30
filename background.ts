@@ -19,20 +19,20 @@ async function checkForNewMessages() {
   // fetch streams for whatever location
   const streams = await getMessageStreams(token, locationId);
   streams.forEach((stream) => {
-    const ts = new Date(stream.lastMessageAt).getTime();
+    const timeStamp = new Date(stream.lastMessageAt).getTime();
     const prev = lastSeen[stream.id] || 0;
 
-    if (ts > prev) {
+    if (timeStamp > prev) {
       // new message
       chrome.notifications.create(stream.id, {
         type:           "basic",
         iconUrl:        "icons/notif.png",
         title:          `New message from ${stream.clientName}`,
         message:        stream.lastMessage,
-        contextMessage: `${Math.floor((Date.now() - ts) / 60000)}m ago`,
+        contextMessage: `${Math.floor((Date.now() - timeStamp) / 60000)}m ago`,
         priority:       2,
       });
-      lastSeen[stream.id] = ts;
+      lastSeen[stream.id] = timeStamp;
     }
   });
 }

@@ -77,7 +77,7 @@ export const App: React.FC = () => {
   // whenever the user picks a different course, update locationId
   useEffect(() => {
     if (!selected) return;
-    const match = locations.find((loc) => loc.name === selected);
+    const match = locations.find((location) => location.name === selected);
     const id = match ? match.id : "";
     setLocationId(id);
 
