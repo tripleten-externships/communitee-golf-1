@@ -64,10 +64,7 @@ chrome.notifications.onClicked.addListener((streamId) => {
 //
 async function exampleNotifications(){
  const { locationId } = await getStoredData();
- if (!locationId){
-   console.log("No valid token or locationId found. Skipping message check.");
-   return;
- }
+ if (!locationId) return;
  const streams = await getMessageStreams(locationId);
  streams.forEach((stream) => {
    console.log(stream)
@@ -87,20 +84,15 @@ async function exampleNotifications(){
  });
 }
 
-
 chrome.runtime.onInstalled.addListener(() => {
  chrome.alarms.create("pollMessages", { periodInMinutes: 0.5 });
  exampleNotifications();
 });
-
-
 chrome.alarms.onAlarm.addListener(alarm => {
  if (alarm.name === "pollMessages") {
    exampleNotifications();
  }
 });
-
-
 chrome.runtime.onMessage.addListener((message) => {
  if (message.action === "loginAndLocationSelected") {
    exampleNotifications();
