@@ -30,7 +30,6 @@ async function checkForNewMessages() {
         iconUrl:        "icons/notif.png",
         title:          `New message from ${stream.clientName}`,
         message:        stream.lastMessage,
-        contextMessage: `${Math.floor((Date.now() - timeStamp) / 60000)}m ago`,
         priority:       2,
       });
       lastSeen[stream.id] = timeStamp;
@@ -39,7 +38,7 @@ async function checkForNewMessages() {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
- chrome.alarms.create("pollMessages", { periodInMinutes: 0.5 });
+ chrome.alarms.create("pollMessages", { periodInMinutes: 0.12 });
 });
 chrome.alarms.onAlarm.addListener(alarm => {
  if (alarm.name === "pollMessages") checkForNewMessages();
@@ -57,49 +56,3 @@ chrome.notifications.onClicked.addListener((streamId) => {
    height: 625,
  });
 });
-
-
-
-// TEST notifications for mock api
-// Start of code for automatically getting notifications from mock API
-//
-async function exampleNotifications(){
- const { token, locationId } = await getStoredData();
- if (!token || !locationId) return;
- const streams = await getMessageStreams(token, locationId);
- streams.forEach((stream) => {
-   console.log(stream)
-   chrome.notifications.create(stream.id, {
-     type:    "basic",
-     iconUrl: chrome.runtime.getURL("icons/notif.png"),
-     title:  `New message from ${stream.clientName}`,
-     message: stream.lastMessage,
-     priority: 2
-   }, (id) => {
-     if (chrome.runtime.lastError) {
-       console.error("notify error:", chrome.runtime.lastError.message);
-     } else {
-       console.log("notification id:", id);
-     }
-   });
- });
-}
-
-chrome.runtime.onInstalled.addListener(() => {
- chrome.alarms.create("pollMessages", { periodInMinutes: 0.1 });
- exampleNotifications();
-});
-chrome.alarms.onAlarm.addListener(alarm => {
- if (alarm.name === "pollMessages") {
-   exampleNotifications();
- }
-});
-chrome.runtime.onMessage.addListener((message) => {
- if (message.action === "loginAndLocationSelected") {
-   exampleNotifications();
- }
-});
-//
-// End of code for automatically getting notifications from mock API
-//
-
