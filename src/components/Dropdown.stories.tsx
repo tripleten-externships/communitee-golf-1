@@ -1,13 +1,13 @@
 import { Dropdown } from "./Dropdown";
 interface Item {
   id: string;
-  name: string;
+  title: string;
 }
 
 interface DropdownArgs {
   buttonText: string;
   items: Item[];
-  onSelect: (item: string) => void;
+  onSelect?: (item: Item) => void;
 }
 
 export default {
@@ -16,9 +16,9 @@ export default {
   args: {
     buttonText: "Select Location",
     items: [
-      { id: "1", name: "Golf Course one" },
-      { id: "2", name: "Golf Course two" },
-      { id: "3", name: "Golf Course three" },
+      { id: "1", title: "Golf Course one" },
+      { id: "2", title: "Golf Course two" },
+      { id: "3", title: "Golf Course three" },
     ],
     onSelect: (item: Item) => console.log("Selected:", item),
   },
