@@ -60,7 +60,7 @@ chrome.notifications.onClicked.addListener((streamId) => {
 
 
 
-//
+// TEST notifications for mock api
 // Start of code for automatically getting notifications from mock API
 //
 async function exampleNotifications(){
