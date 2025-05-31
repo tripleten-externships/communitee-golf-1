@@ -38,6 +38,17 @@ export const App: React.FC = () => {
   >([]);
   const navigate = useNavigate();
 
+  // persist our auth token so the service worker can read it
+  useEffect(() => {
+    if (!token) return;
+    if (window.chrome?.storage?.local) {
+      chrome.storage.local.set({ token });
+    } else {
+      // dev‐mode fallback for npm run dev
+      window.localStorage.setItem("token", token);
+    }
+  }, [token]);
+
   // when notification is clicked, load that stream, set it as active, and navigate into the DM view.
   useEffect(() => {
     const hash = window.location.hash;
@@ -77,16 +88,12 @@ export const App: React.FC = () => {
   // whenever the user picks a different course, update locationId
   useEffect(() => {
     if (!selected) return;
-    const match = locations.find((loc) => loc.name === selected);
+    const match = locations.find((location) => location.name === selected);
     const id = match ? match.id : "";
     setLocationId(id);
 
-    if (window.chrome?.storage?.local) {
-      chrome.storage.local.set({ locationId: id });
-    } else {
-      // dev‐mode fallback
-      window.localStorage.setItem("locationId", id);
-    }
+    chrome.storage.local.set({ locationId: id });
+    window.localStorage.setItem("locationId", id);
   }, [selected, locations]);
 
   // fetch messageStreams for the current location
