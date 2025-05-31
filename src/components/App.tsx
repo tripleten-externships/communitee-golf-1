@@ -14,6 +14,7 @@ import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { Dropdown } from "./Dropdown";
 import DMView, { Message as DMMessage } from "./DMView";
 import Menu, { Message as MenuMessage } from "./Menu";
+import type {Item} from "./Dropdown.tsx";
 
 import { useAuth } from "../contexts/useAuth.ts";
 
@@ -21,7 +22,7 @@ import { ProtectedRoute } from "./ProtectedRoute.tsx";
 
 export const App: React.FC = () => {
   const { isAuthenticated, logout, token, user } = useAuth();
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selectedLocationName, setSelectedLocationName] = useState<string | null>(null);
   const [locations, setLocations] = useState<{ id: string; name: string }[]>(
     []
   );
@@ -50,10 +51,10 @@ export const App: React.FC = () => {
 
   // whenever the user picks a different course, update locationId
   useEffect(() => {
-    if (!selected) return;
-    const match = locations.find((location) => location.name === selected);
+    if (!selectedLocationName) return;
+    const match = locations.find((location) => location.name === selectedLocationName);
     setLocationId(match ? match.id : "");
-  }, [selected, locations]);
+  }, [selectedLocationName, locations]);
 
   // fetch messageStreams for the current location
   useEffect(() => {
@@ -126,9 +127,9 @@ export const App: React.FC = () => {
                 Location
               </div>
               <Dropdown
-                buttonText={selected ?? "Select Location"}
-                items={locations}
-                onSelect={(item) => setSelected(item)}
+                buttonText={selectedLocationName ?? "Select Location"}
+                items={locations.map(loc => ({ id: loc.id, title: loc.name }))}
+                onSelect={(item: Item) => setSelectedLocationName(item.title)}
               />
               <Menu messagesArray={messagesData} onSelect={handleSelect} />
             </ProtectedRoute>
