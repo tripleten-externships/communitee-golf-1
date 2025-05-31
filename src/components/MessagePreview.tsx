@@ -15,7 +15,6 @@ const MessagePreview: React.FC<MessagePreviewProps> = ({ previewProps }) => {
     <div
       className="
         relative
-        w-[304px]
         h-[52px]
         rounded-[12px]
         flex

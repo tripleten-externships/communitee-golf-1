@@ -39,6 +39,43 @@ export const App: React.FC = () => {
   >([]);
   const navigate = useNavigate();
 
+  // persist our auth token so the service worker can read it
+  useEffect(() => {
+    if (!token) return;
+    if (window.chrome?.storage?.local) {
+      chrome.storage.local.set({ token });
+    } else {
+      // dev‐mode fallback for npm run dev
+      window.localStorage.setItem("token", token);
+    }
+  }, [token]);
+
+  // when notification is clicked, load that stream, set it as active, and navigate into the DM view.
+  useEffect(() => {
+    const hash = window.location.hash;
+    const [path, query] = hash.split("?");
+    if (path === "#/dm" && query) {
+      const params = new URLSearchParams(query);
+      const streamId = params.get("streamId");
+      if (streamId && token) {
+        // fetch the thread, then navigate into /dm
+        getSingleMessageStream(token, streamId)
+          .then((full) => {
+            setThread(full.messages);
+            setActiveDm({
+              messageid: streamId,
+              username: full.clientName,
+              picture: full.clientImage,
+              text: full.lastMessage,
+              timestamp: new Date(full.lastMessageAt).getTime(),
+            });
+            navigate("/dm");
+          })
+          .catch(console.error);
+      }
+    }
+  }, [token, navigate]);
+
   // get locations for the course
   useEffect(() => {
     if (!token) return;
@@ -53,7 +90,11 @@ export const App: React.FC = () => {
   useEffect(() => {
     if (!selectedLocationName) return;
     const match = locations.find((location) => location.name === selectedLocationName);
-    setLocationId(match ? match.id : "");
+    const id = match ? match.id : "";
+    setLocationId(id);
+
+    chrome.storage.local.set({ locationId: id });
+    window.localStorage.setItem("locationId", id);
   }, [selectedLocationName, locations]);
 
   // fetch messageStreams for the current location
@@ -83,6 +124,7 @@ export const App: React.FC = () => {
     setActiveDm(null);
     logout();
     setLocations([]);
+    setActiveDm(null);
   };
 
   // messaging system
@@ -99,9 +141,38 @@ export const App: React.FC = () => {
     });
   };
 
+  // notification system
+  useEffect(() => {
+    if (!window.chrome?.runtime?.onMessage) return;
+
+    function handleMessage(msg: { openStream?: string }) {
+      if (!msg.openStream || !isAuthenticated) return;
+
+      const stream = messagesData.find((m) => m.id === msg.openStream);
+      if (!stream) return;
+
+      getSingleMessageStream(token!, stream.id).then((full) => {
+        setThread(full.messages);
+        setActiveDm({
+          messageid: stream.id,
+          username: stream.clientName,
+          picture: stream.clientImage,
+          text: stream.lastMessage,
+          timestamp: new Date(stream.lastMessageAt).getTime(),
+        });
+        navigate("/dm");
+      });
+    }
+
+    chrome.runtime.onMessage.addListener(handleMessage);
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleMessage);
+    };
+  }, [messagesData, token, isAuthenticated, navigate]);
+
   return (
     // main styling for chrome extension
-    <div className="relative bg-white rounded-2xl shadow-lg p-5 w-[336px] h-[595px] border border-alt-grey">
+    <div className="relative bg-white rounded-2xl shadow-lg p-5 w-[336px] h-[595px] border border-alt-grey overflow-hidden">
       <Header
         onClose={() => window.close()}
         onLogout={handleLogout}

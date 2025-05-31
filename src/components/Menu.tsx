@@ -26,8 +26,8 @@ const Menu: React.FC<MenuProps> = ({ messagesArray, onSelect }) => {
       <p className="font-poppins font-medium text-center text-base w-[152px] text-black border-b-2 border-b-black mt-[30px] mx-auto py-[10px]">
         Messages {messagesArray?.length ? `(${messagesArray.length})` : "(0)"}
       </p>
-      <ul className="flex flex-col justify-center items-center mt-[16px] gap-[12px]">
-       { messagesArray?.map((message) => (
+      <ul className="flex flex-col justify-center mt-[16px] gap-[12px]">
+        {messagesArray?.map((message) => (
           <li
             key={`${message.clientName}-${message.locationId}`}
             onClick={() => onSelect(message)}
@@ -42,8 +42,7 @@ const Menu: React.FC<MenuProps> = ({ messagesArray, onSelect }) => {
               }}
             />
           </li>
-          ))
-        }
+        ))}
       </ul>
     </div>
   );
