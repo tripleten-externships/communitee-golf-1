@@ -5,9 +5,10 @@ const lastSeen: Record<string, number> = {};
 
 async function getStoredData(): Promise<{ token: string|null; locationId: string|null }> {
   return new Promise((resolve) => {
-    chrome.storage.local.get(["token","locationId"], (res) =>
-      resolve({ token: res.token ?? null, locationId: res.locationId ?? null })
-    );
+    chrome.storage.local.get(["token","locationId"], (res) => {
+      console.log("Background read token/locationId:", res.token, res.locationId);
+      resolve({ token: res.token ?? null, locationId: res.locationId ?? null });
+    });
   });
 }
 
