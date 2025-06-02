@@ -2,19 +2,18 @@ import { getMessageStreams, getSingleMessageStream } from "./src/components/util
 
 // remember the last timestamp for each stream
 const lastSeen: Record<string, number> = {};
-async function getStoredData(): Promise<{ token: string|null; locationId: string|null }> {
+async function getStoredData(): Promise<{ token: string|null; locationId: string|null; userId:string|null; }> {
   return new Promise((resolve) => {
-    chrome.storage.local.get(["token","locationId"], (res) => {
-      resolve({ token: res.token ?? null, locationId: res.locationId ?? null });
+    chrome.storage.local.get(["token","locationId","userId"], (res) => {
+      resolve({ token: res.token ?? null, locationId: res.locationId ?? null, userId: res.userId ?? null});
     });
   });
 }
 
 // polling function
 async function checkForNewMessages() {
- const { token, locationId } = await getStoredData();
- if (!token || !locationId) return;
-
+ const { token, locationId, userId } = await getStoredData();
+ if (!token || !locationId || !userId) return;
   // fetch streams for whatever location
   const streams = await getMessageStreams(token, locationId);
   for (const stream of streams) {
@@ -24,11 +23,9 @@ async function checkForNewMessages() {
     const prev = lastSeen[stream.id] || 0;
     if (timeStamp > prev) {
       const lastMessage = singleStream.messages[singleStream.messages.length - 1];
-      // Given that the externship does not provide real data of real user accounts, 
-      // the username is hardcoded in; matching the provided API's account: "user-123".
     if (singleStream.messages.length > 0){
       const lastSenderId = lastMessage?.senderId; 
-      if (lastSenderId !== "user-123") {         
+      if (lastSenderId !== userId) {         
         // new message if from sender.        
        chrome.notifications.create(stream.id, {
            type:           "basic",

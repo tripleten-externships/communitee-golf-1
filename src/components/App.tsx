@@ -41,14 +41,14 @@ export const App: React.FC = () => {
 
   // persist our auth token so the service worker can read it
   useEffect(() => {
-    if (!token) return;
+    if (!token || !user) return;
     if (window.chrome?.storage?.local) {
-      chrome.storage.local.set({ token });
+      chrome.storage.local.set({ token: token, userId: user.id });
     } else {
       // dev‐mode fallback for npm run dev
       window.localStorage.setItem("token", token);
     }
-  }, [token]);
+  }, [token, user]);
 
   // when notification is clicked, load that stream, set it as active, and navigate into the DM view.
   useEffect(() => {
