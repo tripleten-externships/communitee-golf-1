@@ -3,7 +3,7 @@
   "name": "CommuniteeGolf Chat",
   "version": "1.0.0",
   "description": "A chat extension for CommuniteeGolf",
-  "permissions": ["storage", "notifications", "alarms"],
+  "permissions": ["storage", "notifications", "alarms", "tabs", "windows"],
   "action": {
     "default_popup": "index.html"
   },

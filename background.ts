@@ -1,12 +1,10 @@
 import { getMessageStreams } from "./src/components/utils/api.js"
 
-
 // remember the last timestamp for each stream
 const lastSeen: Record<string, number> = {};
 async function getStoredData(): Promise<{ token: string|null; locationId: string|null }> {
   return new Promise((resolve) => {
     chrome.storage.local.get(["token","locationId"], (res) => {
-      console.log("Background read token/locationId:", res.token, res.locationId);
       resolve({ token: res.token ?? null, locationId: res.locationId ?? null });
     });
   });
@@ -38,21 +36,64 @@ async function checkForNewMessages() {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
- chrome.alarms.create("pollMessages", { periodInMinutes: 0.12 });
+  chrome.alarms.create("pollMessages", { periodInMinutes: 0.5 });
 });
 chrome.alarms.onAlarm.addListener(alarm => {
- if (alarm.name === "pollMessages") checkForNewMessages();
+  if (alarm.name === "pollMessages") checkForNewMessages();
 });
 
-// if the user clicks the notification, open popup and tell which stream to show
 chrome.notifications.onClicked.addListener((streamId) => {
- //  construct a URL for popup page, including the stream ID
- const url = chrome.runtime.getURL(`index.html#/dm?streamId=${streamId}`);
-  // open it in a new popup-style window:
- chrome.windows.create({
-   url,
-   type:   "popup",
-   width:  336,  
-   height: 625,
- });
+  const extOrigin = chrome.runtime.getURL(""); 
+
+  const targetUrl = `${extOrigin}index.html#/dm?streamId=${streamId}`;
+
+  chrome.storage.local.get(["lastPopupWindowId"], (rsp) => {
+    const prevWinId = rsp.lastPopupWindowId as number | undefined;
+
+    if (typeof prevWinId === "number") {
+      // try to fetch popup window by ID
+      chrome.windows.get(prevWinId, { populate: true }, (win) => {
+        if (chrome.runtime.lastError || !win || win.type !== "popup") {
+          console.warn(`[background] previous popup ${prevWinId} missing or not a popup → creating new`);
+          createAndStorePopup(targetUrl);
+        } else {
+          // find any tab or popup whose URL starts with the extension’s origin
+          const matchingTab = win.tabs?.find(t => t.url?.startsWith(extOrigin));
+          if (matchingTab && matchingTab.id != null) {
+            chrome.tabs.update(matchingTab.id, { url: targetUrl });
+            chrome.windows.update(prevWinId!, { focused: true });
+          } else {
+            createAndStorePopup(targetUrl);
+          }
+        }
+      });
+    } else {
+      createAndStorePopup(targetUrl);
+    }
+  });
+});
+
+function createAndStorePopup(url: string) {
+  chrome.windows.create(
+    {
+      url,
+      type:   "popup",
+      width:  336,
+      height: 625,
+    },
+    (newWin) => {
+      if (newWin && typeof newWin.id === "number") {
+        chrome.storage.local.set({ lastPopupWindowId: newWin.id });
+      }
+    }
+  );
+}
+
+chrome.windows.onRemoved.addListener((removedWindowId) => {
+  chrome.storage.local.get(["lastPopupWindowId"], (rsp) => {
+    const stored = rsp.lastPopupWindowId as number | undefined;
+    if (stored === removedWindowId) {   
+      chrome.storage.local.remove("lastPopupWindowId");
+    }
+  });
 });
