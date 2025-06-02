@@ -1,4 +1,4 @@
-import { getMessageStreams } from "./src/components/utils/api.js"
+import { getMessageStreams, getSingleMessageStream } from "./src/components/utils/api.tsx"
 
 
 // remember the last timestamp for each stream
@@ -6,7 +6,6 @@ const lastSeen: Record<string, number> = {};
 async function getStoredData(): Promise<{ token: string|null; locationId: string|null }> {
   return new Promise((resolve) => {
     chrome.storage.local.get(["token","locationId"], (res) => {
-      console.log("Background read token/locationId:", res.token, res.locationId);
       resolve({ token: res.token ?? null, locationId: res.locationId ?? null });
     });
   });
@@ -19,22 +18,31 @@ async function checkForNewMessages() {
 
   // fetch streams for whatever location
   const streams = await getMessageStreams(token, locationId);
-  streams.forEach((stream) => {
+  for (const stream of streams) {
+    // fetch individual streams to access messages' senderId
+    const singleStream = await getSingleMessageStream(token, stream.id);
     const timeStamp = new Date(stream.lastMessageAt).getTime();
     const prev = lastSeen[stream.id] || 0;
-
     if (timeStamp > prev) {
-      // new message
-      chrome.notifications.create(stream.id, {
-        type:           "basic",
-        iconUrl:        "icons/notif.png",
-        title:          `New message from ${stream.clientName}`,
-        message:        stream.lastMessage,
-        priority:       2,
-      });
+      const lastMessage = singleStream.messages[singleStream.messages.length - 1];
+      // Given that the externship does not provide real data of real user accounts, 
+      // the username is hardcoded in; matching the provided API's account: "user-123".
+    if (singleStream.messages.length > 0){
+      const lastSenderId = lastMessage?.senderId; 
+      if (lastSenderId !== "user-123") {         
+        // new message if from sender.        
+       chrome.notifications.create(stream.id, {
+           type:           "basic",
+           iconUrl:        "icons/notif.png",
+           title:          `New message from ${stream.clientName}`,
+           message:        stream.lastMessage,
+           priority:       2,
+         });
+       }
+    }
       lastSeen[stream.id] = timeStamp;
     }
-  });
+  }
 }
 
 chrome.runtime.onInstalled.addListener(() => {
