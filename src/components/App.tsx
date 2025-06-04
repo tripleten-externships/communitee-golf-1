@@ -14,7 +14,7 @@ import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { Dropdown } from "./Dropdown";
 import DMView, { Message as DMMessage } from "./DMView";
 import Menu, { Message as MenuMessage } from "./Menu";
-import type {Item} from "./Dropdown.tsx";
+import type { Item } from "./Dropdown.tsx";
 
 import { useAuth } from "../contexts/useAuth.ts";
 
@@ -22,7 +22,9 @@ import { ProtectedRoute } from "./ProtectedRoute.tsx";
 
 export const App: React.FC = () => {
   const { isAuthenticated, logout, token, user } = useAuth();
-  const [selectedLocationName, setSelectedLocationName] = useState<string | null>(null);
+  const [selectedLocationName, setSelectedLocationName] = useState<
+    string | null
+  >(null);
   const [locations, setLocations] = useState<{ id: string; name: string }[]>(
     []
   );
@@ -39,16 +41,45 @@ export const App: React.FC = () => {
   >([]);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // read from chrome.storage.local:
+    if (window.chrome?.storage?.local) {
+      chrome.storage.local.get(["locationId"], (res) => {
+        const storedId = res.locationId as string | undefined;
+        if (storedId && locations.length > 0) {
+          // stored ID; find its name in our loaded `locations` array:
+          const found = locations.find((location) => location.id === storedId);
+          if (found) {
+            setLocationId(storedId);
+            setSelectedLocationName(found.name);
+          }
+        }
+      });
+    }
+    // (dev‐mode), fall back to window.localStorage:
+    else {
+      const savedId = window.localStorage.getItem("locationId");
+      if (savedId && locations.length > 0) {
+        const found = locations.find((location) => location.id === savedId);
+        if (found) {
+          setLocationId(savedId);
+          setSelectedLocationName(found.name);
+        }
+      }
+    }
+    // re-run this effect whenever "locations" changes
+  }, [locations]);
+
   // persist our auth token so the service worker can read it
   useEffect(() => {
-    if (!token) return;
+    if (!token || !user) return;
     if (window.chrome?.storage?.local) {
-      chrome.storage.local.set({ token });
+      chrome.storage.local.set({ token: token, userId: user.id });
     } else {
       // dev‐mode fallback for npm run dev
       window.localStorage.setItem("token", token);
     }
-  }, [token]);
+  }, [token, user]);
 
   // when notification is clicked, load that stream, set it as active, and navigate into the DM view.
   useEffect(() => {
@@ -89,7 +120,9 @@ export const App: React.FC = () => {
   // whenever the user picks a different course, update locationId
   useEffect(() => {
     if (!selectedLocationName) return;
-    const match = locations.find((location) => location.name === selectedLocationName);
+    const match = locations.find(
+      (location) => location.name === selectedLocationName
+    );
     const id = match ? match.id : "";
     setLocationId(id);
 
@@ -199,7 +232,10 @@ export const App: React.FC = () => {
               </div>
               <Dropdown
                 buttonText={selectedLocationName ?? "Select Location"}
-                items={locations.map(loc => ({ id: loc.id, title: loc.name }))}
+                items={locations.map((loc) => ({
+                  id: loc.id,
+                  title: loc.name,
+                }))}
                 onSelect={(item: Item) => setSelectedLocationName(item.title)}
               />
               <Menu messagesArray={messagesData} onSelect={handleSelect} />
